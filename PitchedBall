@@ -1,0 +1,27 @@
+CREATE DATABASE PitchedBall
+
+USE [PitchedBall]
+GO
+CREATE TABLE PitchedBall
+(
+  mass decimal(18,4);
+  circumference decimal(18,4);
+  x0 decimal(18,4);
+  y0 decimal(18,4);
+  z0 decimal(18,4);
+  v0 decimal(18,4);
+  theta decimal(18,4);
+  phi decimal(18,4);
+  wb decimal(18,4);
+  ws decimal(18,4);
+  wg decimal(18,4);
+  tau decimal(18,4);
+  dt 
+  T decimal(18,4);
+  elev decimal(18,4);
+  vwind decimal(18,4);
+  phiwind decimal(18,4);
+  relative_humidity decimal(18,4);
+  barometric_pressure decimal(18,4);
+  
+)
