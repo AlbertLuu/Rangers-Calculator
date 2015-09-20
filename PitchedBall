@@ -1,6 +1,6 @@
-CREATE DATABASE PitchedBall
+CREATE DATABASE CALCULATOR
 
-USE [PitchedBall]
+USE [CALCULAOTR]
 GO
 CREATE TABLE PitchedBall
 (
@@ -17,11 +17,49 @@ CREATE TABLE PitchedBall
   wg decimal(18,4);
   tau decimal(18,4);
   dt 
-  T decimal(18,4);
+  T_US decimal(18,4);
   elev decimal(18,4);
   vwind decimal(18,4);
   phiwind decimal(18,4);
   relative_humidity decimal(18,4);
   barometric_pressure decimal(18,4);
   
+  /*
+  rho_US decimal(18,4);
+  rho_Metric decimal(18,4);
+  const decimal(18,4);
+  c0 decimal(18,4);
+  beta decimal(18,4);
+  v0 decimal(18,4);
+  v0x decimal(18,4);
+  v0z decimal(18,4);
+  wx decimal(18,4);
+  wy decimal(18,4);
+  wz decimal(18,4);
+  omega decimal(18,4);
+  romega decimal(18,4);
+  T_Metric decimal(18,4);
+  elev decimal(18,4);
+  vxw decimal(18,4);
+  vyw decimal(18,4);
+  SVP_Metric decimal(18,4);
+  barometric_pressure_Metric decimal(18,4);
+  re100 decimal(18,4);
+  */
+  
+  SELECT T_Metric,
+         barometric_pressure_Metric,
+         beta,
+         elev,
+         relative_humidity,
+         SVP_Metric
+         
+  
+  
+  
+  
+  
 )
+
+
+
