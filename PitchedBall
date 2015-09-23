@@ -6,10 +6,10 @@ CREATE TABLE PitchedBall
 (
   mass decimal(18,4);
   circumference decimal(18,4);
-  x0 decimal(18,4);
-  y0 decimal(18,4);
-  z0 decimal(18,4);
-  v0 decimal(18,4);
+  x01 decimal(18,4);
+  y01 decimal(18,4);
+  z01 decimal(18,4);
+  v01 decimal(18,4); (mph)
   theta decimal(18,4);
   phi decimal(18,4);
   wb decimal(18,4);
@@ -17,17 +17,17 @@ CREATE TABLE PitchedBall
   wg decimal(18,4);
   tau decimal(18,4);
   dt 
-  T_US decimal(18,4);
-  elev decimal(18,4);
+  T1 decimal(18,4);
+  elev1 decimal(18,4);
   vwind decimal(18,4);
   phiwind decimal(18,4);
   relative_humidity decimal(18,4);
-  barometric_pressure decimal(18,4);
+  barometric_pressure1 decimal(18,4);
   
-  /*
-  rho_US decimal(18,4);
-  rho_Metric decimal(18,4);
-  const decimal(18,4);
+  
+  rho1 decimal(18,4);
+  rho2 decimal(18,4);
+  const decimal(18,4); // constant
   c0 decimal(18,4);
   beta decimal(18,4);
   v0 decimal(18,4);
@@ -38,14 +38,22 @@ CREATE TABLE PitchedBall
   wz decimal(18,4);
   omega decimal(18,4);
   romega decimal(18,4);
-  T_Metric decimal(18,4);
-  elev decimal(18,4);
+  T2 decimal(18,4);
+  elev2 decimal(18,4);
   vxw decimal(18,4);
   vyw decimal(18,4);
-  SVP_Metric decimal(18,4);
-  barometric_pressure_Metric decimal(18,4);
+  SVP decimal(18,4);
+  barometric_pressure2 decimal(18,4);
   re100 decimal(18,4);
-  */
+  
+  
+  xf decimal(18,4);
+  yf decimal(18,4);
+  zf decimal(18,4);
+  hangtime decimal(18,4);
+  vf decimal(18,4);
+  
+  
   
   SELECT T_Metric,
          barometric_pressure_Metric,
@@ -53,7 +61,33 @@ CREATE TABLE PitchedBall
          elev,
          relative_humidity,
          SVP_Metric
-         
+  INSERT INTO rho_Metric
+  
+  rho2=1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760)
+  rho1= rho2*0.06261
+  const = .5*rho2*A/m in 1/ft
+  c0 =0.07182*rho2*(5.125/mass)*(circumference/9.125)^2
+  beta is a constant
+  v02 = v01 * 1.467
+  v0x = =1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180)
+  v0y =1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180)
+  v0z = 1.467*v02*SIN(theta*PI()/180)
+  wx =(wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30
+  wy =(-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30
+  wz =(ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30
+  omega = =SQRT(wx^2+wy^2+wz^2)
+  romega =(circumference/2/PI())*omega/12
+  T2 =(5/9)*(T1-32)
+  elev2 = elev1/3.2808
+  vxw =vwind*1.467*SIN(phiwind*PI()/180)
+  vyw = vwind*1.467*COS(phiwind*PI()/180)
+  SVP = 4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2))
+  barometric_pressure2 = barometric_pressure1*1000/39.37
+  re100 = rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5)
+  
+  xf = 
+  
+  
   
   
   
