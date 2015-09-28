@@ -3,9 +3,11 @@ CREATE DATABASE PITCHEDBALL
 USE [PITCHEDBALL]
 GO
 CREATE TABLE HOMEPLATECROSSING
-CREATE TABLE ADAIR-3
-CREATE TABLE SUMMARY
-CREATE TABLE DATA
+//CREATE TABLE ADAIR-3
+//CREATE TABLE SUMMARY
+//CREATE TABLE DATA
+
+
 CREATE TABLE VARIABLES
 (
   mass decimal(18,4);
@@ -13,14 +15,14 @@ CREATE TABLE VARIABLES
   x01 decimal(18,4);
   y01 decimal(18,4);
   z01 decimal(18,4);
-  v01 decimal(18,4); (mph)
+  v01 decimal(18,4);
   theta decimal(18,4);
   phi decimal(18,4);
   wb decimal(18,4);
   ws decimal(18,4);
   wg decimal(18,4);
   tau decimal(18,4);
-  dt 
+  dt decimal (18,4);
   T1 decimal(18,4);
   elev1 decimal(18,4);
   vwind decimal(18,4);
@@ -65,15 +67,18 @@ CREATE TABLE VARIABLES
          elev,
          relative_humidity,
          SVP_Metric
-  INSERT INTO rho_Metric
+         
+  INSERT INTO PitchedBaseball
+  VALUES()
   
   rho2=1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760)
+  
   rho1= rho2*0.06261
   const = .5*rho2*A/m in 1/ft
   c0 =0.07182*rho2*(5.125/mass)*(circumference/9.125)^2
   beta is a constant
   v02 = v01 * 1.467
-  v0x = =1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180)
+  v0x = 1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180)
   v0y =1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180)
   v0z = 1.467*v02*SIN(theta*PI()/180)
   wx =(wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30
@@ -92,6 +97,19 @@ CREATE TABLE VARIABLES
   xf = 
   
   
+  INSERT INTO NEWTABLE
+  (field1, field2,......)
+  
+  Values(X,Y,3,4,5)
+
+
+CONSANTS A,1,2,3,4,5
+
+INSERT INTO RESULTStABLE
+sELECT * FROM cONSTANTS
+(1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,) 
+
+
   
   
   
