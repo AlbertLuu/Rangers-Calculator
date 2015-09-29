@@ -8,82 +8,165 @@ CREATE TABLE HOMEPLATECROSSING
 //CREATE TABLE DATA
 
 
-CREATE TABLE CONSTANTS
+    CREATE TABLE CONSTANTS
+    (
+      mass decimal(18,4);
+      circumference decimal(18,4);
+      x01 decimal(18,4);
+      y01 decimal(18,4);
+      z01 decimal(18,4);
+      v01 decimal(18,4);
+      theta decimal(18,4);
+      phi decimal(18,4);
+      wb decimal(18,4);
+      ws decimal(18,4);
+      wg decimal(18,4);
+      tau decimal(18,4);
+      dt decimal (18,4);
+      T1 decimal(18,4);
+      elev1 decimal(18,4);
+      vwind decimal(18,4);
+      phiwind decimal(18,4);
+      relative_humidity decimal(18,4);
+      barometric_pressure1 decimal(18,4);
+      beta decimal(18,4);
+      drag int(18,4);
+      magnus int(18,4);
+      
+    )
+  
+    CREATE TABLE CALCULATIONS
+    (
+      rho1 decimal(18,4);
+      rho2 decimal(18,4);
+      const decimal(18,4); // constant
+      c0 decimal(18,4);
+      beta decimal(18,4);
+      v0 decimal(18,4);
+      v0x decimal(18,4);
+      v0z decimal(18,4);
+      wx decimal(18,4);
+      wy decimal(18,4);
+      wz decimal(18,4);
+      omega decimal(18,4);
+      romega decimal(18,4);
+      T2 decimal(18,4);
+      elev2 decimal(18,4);
+      vxw decimal(18,4);
+      vyw decimal(18,4);
+      SVP decimal(18,4);
+      barometric_pressure2 decimal(18,4);
+      re100 decimal(18,4);
+    )
+
+    INSERT INTO CALCULATIONS
+    SELECT * FROM CONSTANTS, CALCULATIONS
+    VALUES(
+            1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,
+            rho2*0.06261,
+            .5*rho2*A/m,
+            0.07182*rho2*(5.125/mass)*(circumference/9.125)^2,
+            beta,
+            v01 * 1.467,
+            1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180),
+            1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180),
+            1.467*v02*SIN(theta*PI()/180),
+            (wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30,
+            (-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30,
+            (ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30,
+            SQRT(wx^2+wy^2+wz^2),
+            (circumference/2/PI())*omega/12,
+            (5/9)*(T1-32),
+            elev1/3.2808,
+            vwind*1.467*SIN(phiwind*PI()/180),
+            vwind*1.467*COS(phiwind*PI()/180),
+            4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2)),
+            barometric_pressure1*1000/39.37,
+            rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5);
+          )
+
+CREATE TABLE DATA
 (
-  mass decimal(18,4);
-  circumference decimal(18,4);
-  x01 decimal(18,4);
-  y01 decimal(18,4);
-  z01 decimal(18,4);
-  v01 decimal(18,4);
-  theta decimal(18,4);
-  phi decimal(18,4);
-  wb decimal(18,4);
-  ws decimal(18,4);
-  wg decimal(18,4);
-  tau decimal(18,4);
-  dt decimal (18,4);
-  T1 decimal(18,4);
-  elev1 decimal(18,4);
-  vwind decimal(18,4);
-  phiwind decimal(18,4);
-  relative_humidity decimal(18,4);
-  barometric_pressure1 decimal(18,4);
-  beta decimal(18,4);
-  drag int(18,4);
-  magnus int(18,4);
   
 )
-  
-CREATE TABLE CALCULATIONS
-(
-  rho1 decimal(18,4);
-  rho2 decimal(18,4);
-  const decimal(18,4); // constant
-  c0 decimal(18,4);
-  beta decimal(18,4);
-  v0 decimal(18,4);
-  v0x decimal(18,4);
-  v0z decimal(18,4);
-  wx decimal(18,4);
-  wy decimal(18,4);
-  wz decimal(18,4);
-  omega decimal(18,4);
-  romega decimal(18,4);
-  T2 decimal(18,4);
-  elev2 decimal(18,4);
-  vxw decimal(18,4);
-  vyw decimal(18,4);
-  SVP decimal(18,4);
-  barometric_pressure2 decimal(18,4);
-  re100 decimal(18,4);
-)
 
-INSERT INTO CALCULATIONS
-SELECT * FROM CONSTANTS, CALCULATIONS
-VALUES(1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,
-rho2*0.06261,
-.5*rho2*A/m,
-0.07182*rho2*(5.125/mass)*(circumference/9.125)^2,
-beta,
-v01 * 1.467,
-1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180),
-1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180),
-1.467*v02*SIN(theta*PI()/180),
-(wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30,
-(-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30,
-(ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30,
-SQRT(wx^2+wy^2+wz^2),
-(circumference/2/PI())*omega/12,
-(5/9)*(T1-32),
-elev1/3.2808,
-vwind*1.467*SIN(phiwind*PI()/180),
-vwind*1.467*COS(phiwind*PI()/180),
-4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2)),
-barometric_pressure1*1000/39.37,
-rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5));
+          CREATE TABLE SUMMARY
+          (
+            v0_ decimal(18,4);
+            vf_ decimal(18,4);
+            x0_ decimal(18,4);
+            z0_ decimal(18,4);
+            px_ decimal(18,4);
+            pz_ decimal(18,4);
+            xMvmt decimal(18,4);
+            yMvmt decimal(18,4);
+          )
+          
+          SELECT * FROM CONSTANTS, HOMEPLATECROSSING, SUMMARY, CALCULATIONS
+          VALUES(
+                  v0,
+                  vf,
+                  x0,
+                  z0,
+                  xf,
+                  zf,
+                  12*(px_-(x0+(v0x/v0y)*(17/12-y0)))
+                  12*(pz_-(z0+(v0z/v0y)*(17/12-y0)));
+                )
+            
 
-  
+
+
+    CREATE TABLE ADAIR3
+    (
+      cda decimal(18,4);
+      cba decimal(18,4);
+      vel decimal(18,4);
+      vel_2 decimal(18,4);
+      dv decimal(18,4);
+      dv_2 decimal(18,4);
+    )
+    INSERT INTO ADAIR3 
+    SELECT * FROM CALCULATIONS, ADAIR3
+    VALUES(
+              0.5,
+             -0.227,
+              74.1*1.467*210000/Re100,
+              vel/1.467,
+              14.3*1.467*210000/Re100,
+              dv/1.467;
+          )
+
+
+          SELECT * FROM MISCCALCULATIONS
+          VALUES(
+                  timeX2-timeY3*(timeX2-timeX),
+                  timeY2-timeY3*(timeY2-timeY),
+                  timeZ2-timeY3*(timeZ2-timeZ),
+                  time2-time*(time2-timeY3)
+                  (timeVel2-timeY3*(timeVel2-timeVel))*3600/5280;
+                )
+          
+          CREATE TABLE MISCCALCULATIONS
+          (
+            timeFlag (18,4);
+            timeFlag2 (18,4);
+            timeX (18,4);
+            timeX2 (18,4);
+            timeY (18,4);
+            timeY2 (18,4);
+            timeY3 (18,4);
+            timeZ (18,4);
+            timeZ2 (18,4);
+            time (18,4);
+            time2 (18,4);
+            timeVel (18,4);
+            timeVel2 (18,4);
+          )
+
+
+
+
 CREATE TABLE HOMEPLATECROSSING
 (
   xf decimal(18,4);
@@ -93,33 +176,15 @@ CREATE TABLE HOMEPLATECROSSING
   vf decimal(18,4);
 )
 
-CREATE TABLE DATA
-(
-  
-)
 
-CREATE TABLE SUMMARY
-(
-  
-)
 
-CREATE TABLE ADAIR3
-(
-  cda decimal(18,4);
-  cba decimal(18,4);
-  vel decimal(18,4);
-  vel_2 decimal(18,4);
-  dv decimal(18,4);
-  dv_2 decimal(18,4);
-)
-INSERT INTO ADAIR3 
-SELECT * FROM CALCULATIONS, ADAIR3
-VALUES(0.5,
--0.227,
-74.1*1.467*210000/Re100,
-vel/1.467,
-14.3*1.467*210000/Re100,
-dv/1.467);
+
+
+
+
+
+
+
   
 */
   rho2=1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760)
