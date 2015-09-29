@@ -8,7 +8,7 @@ CREATE TABLE HOMEPLATECROSSING
 //CREATE TABLE DATA
 
 
-CREATE TABLE VARIABLES
+CREATE TABLE CONSTANTS
 (
   mass decimal(18,4);
   circumference decimal(18,4);
@@ -29,8 +29,11 @@ CREATE TABLE VARIABLES
   phiwind decimal(18,4);
   relative_humidity decimal(18,4);
   barometric_pressure1 decimal(18,4);
+ beta decimal(18,4);
+)
   
-  
+CREATE TABLE CALCULATIONS
+(
   rho1 decimal(18,4);
   rho2 decimal(18,4);
   const decimal(18,4); // constant
@@ -51,6 +54,7 @@ CREATE TABLE VARIABLES
   SVP decimal(18,4);
   barometric_pressure2 decimal(18,4);
   re100 decimal(18,4);
+
   
   
   xf decimal(18,4);
@@ -60,14 +64,7 @@ CREATE TABLE VARIABLES
   vf decimal(18,4);
   
   
-  
-  SELECT T_Metric,
-         barometric_pressure_Metric,
-         beta,
-         elev,
-         relative_humidity,
-         SVP_Metric
-         
+
   INSERT INTO PitchedBaseball
   VALUES()
   
@@ -105,9 +102,38 @@ CREATE TABLE VARIABLES
 
 CONSANTS A,1,2,3,4,5
 
-INSERT INTO RESULTStABLE
-sELECT * FROM cONSTANTS
-(1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,) 
+INSERT INTO CALCULATIONS
+SELECT * FROM CONSTANTS, CALCULATIONS
+VALUES(1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,
+rho2*0.06261,
+.5*rho2*A/m,
+0.07182*rho2*(5.125/mass)*(circumference/9.125)^2,
+beta,
+v01 * 1.467,
+1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180),
+1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180),
+1.467*v02*SIN(theta*PI()/180),
+(wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30,
+(-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30,
+(ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30,
+SQRT(wx^2+wy^2+wz^2),
+(circumference/2/PI())*omega/12,
+(5/9)*(T1-32),
+elev1/3.2808,
+vwind*1.467*SIN(phiwind*PI()/180),
+vwind*1.467*COS(phiwind*PI()/180),
+4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2)),
+barometric_pressure1*1000/39.37,
+rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5));
+
+
+
+
+
+
+
+
+) 
 
 
   
