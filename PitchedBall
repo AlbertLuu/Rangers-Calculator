@@ -2,10 +2,7 @@ CREATE DATABASE PITCHEDBALL
 
 USE [PITCHEDBALL]
 GO
-CREATE TABLE HOMEPLATECROSSING
-//CREATE TABLE ADAIR-3
-//CREATE TABLE SUMMARY
-//CREATE TABLE DATA
+
 
 
     CREATE TABLE CONSTANTS
@@ -30,8 +27,10 @@ CREATE TABLE HOMEPLATECROSSING
       relative_humidity decimal(18,4);
       barometric_pressure1 decimal(18,4);
       beta decimal(18,4);
+      constantCD decmial(18,4);
       drag int(18,4);
       magnus int(18,4);
+      
       
     )
   
@@ -57,14 +56,15 @@ CREATE TABLE HOMEPLATECROSSING
       SVP decimal(18,4);
       barometric_pressure2 decimal(18,4);
       re100 decimal(18,4);
+      vf_v0 decimal(18,4);
     )
 
     INSERT INTO CALCULATIONS
-    SELECT * FROM CONSTANTS, CALCULATIONS
+    SELECT * FROM CONSTANTS, CALCULATIONS, HOMEFIELDCROSSING
     VALUES(
             1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,
             rho2*0.06261,
-            .5*rho2*A/m,
+            .5*rho2*
             0.07182*rho2*(5.125/mass)*(circumference/9.125)^2,
             beta,
             v01 * 1.467,
@@ -82,7 +82,8 @@ CREATE TABLE HOMEPLATECROSSING
             vwind*1.467*COS(phiwind*PI()/180),
             4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2)),
             barometric_pressure1*1000/39.37,
-            rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5);
+            rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5)
+            vf/v0;
           )
 
 
@@ -148,9 +149,31 @@ CREATE TABLE HOMEPLATECROSSING
              timeX2-timeY3*(timeX2-timeX),
              timeY2-timeY3*(timeY2-timeY),
              timeZ2-timeY3*(timeZ2-timeZ),
-             time2-time*(time2-timeY3)
+             time2-time*(time2-timeY3),
              (timeVel2-timeY3*(timeVel2-timeVel))*3600/5280;
           )
+
+    CREATE TABLE LINEAREXTRAPOLATION
+    (
+        x1 decimal(18,4);
+        x2 decimal(18,4);
+        z1 decimal(18,4);
+        z2 decimal(18,4);
+        y1 decimal(18,4);
+        y2 decimal(18,4);
+    )
+    
+    INSERT INTO DATA
+    SELECT * FROM CONSTANTS, CALCULATIONS, LINEAREXTRAPOLATION
+    VALUES(
+            x0,
+            x0+(v0x/v0y)*(y1-y2),
+            z0,
+            z0+(v0z/v0y)*(y1-y2),
+            y0,
+            0.0;
+         )
+
 
 
 
@@ -158,24 +181,47 @@ CREATE TABLE HOMEPLATECROSSING
 
 CREATE TABLE MISCCALCULATIONS
 (
-    timeFlag (18,4);
-    timeFlag2 (18,4);
-    timeX (18,4);
-    timeX2 (18,4);
-    timeY (18,4);
-    timeY2 (18,4);
-    timeY3 (18,4);
-    timeZ (18,4);
-    timeZ2 (18,4);
-    time (18,4);
-    time2 (18,4);
-    timeVel2 (18,4);
+    timeFlag decimal(18,4);
+    timeFlag2 decimal(18,4);
+    timeX decimal(18,4);
+    timeX2 decimal(18,4);
+    timeY decimal(18,4);
+    timeY2 decimal(18,4);
+    timeY3 decimal(18,4);
+    timeZ decimal(18,4);
+    timeZ2 decimal(18,4);
+    time decimal(18,4);
+    time2 decimal(18,4);
+    timeVel2 decimal(18,4);
 )
  
 CREATE TABLE DATA
 (
-  
+    t decimal(18,4);
+    x decimal(18,4);
+    y decimal(18,4);
+    z decimal(18,4);
+    r decimal(18,4);
+    vx decimal(18,4);
+    vy decimal(18,4);
+    vz decimal(18,4);
+    cd decimal(18,4);
+    s decimal(18,4);
+    cl decimal(18,4);
+    adragx decimal(18,4);
+    adragy decimal(18,4);
+    adragz decimal(18,4);
+    w decimal(18,4);
+    aMagx decimal(18,4);
+    aMagy decimal(18,4);
+    aMagz decimal(18,4);
+    ax decimal(18,4);
+    ay decimal(18,4);
+    az decimal(18,4);
+    flag decimal(18,4);
 )
+
+
 
 
 
@@ -214,6 +260,12 @@ CREATE TABLE DATA
   SVP = 4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2))
   barometric_pressure2 = barometric_pressure1*1000/39.37
   re100 = rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5)
+  
+  
+  
+  
+  
+  
 /*
   
   
