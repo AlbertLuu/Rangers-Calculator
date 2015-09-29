@@ -29,7 +29,10 @@ CREATE TABLE CONSTANTS
   phiwind decimal(18,4);
   relative_humidity decimal(18,4);
   barometric_pressure1 decimal(18,4);
- beta decimal(18,4);
+  beta decimal(18,4);
+  drag int(18,4);
+  magnus int(18,4);
+  
 )
   
 CREATE TABLE CALCULATIONS
@@ -54,53 +57,7 @@ CREATE TABLE CALCULATIONS
   SVP decimal(18,4);
   barometric_pressure2 decimal(18,4);
   re100 decimal(18,4);
-
-  
-  
-  xf decimal(18,4);
-  yf decimal(18,4);
-  zf decimal(18,4);
-  hangtime decimal(18,4);
-  vf decimal(18,4);
-  
-  
-
-  INSERT INTO PitchedBaseball
-  VALUES()
-  
-  rho2=1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760)
-  
-  rho1= rho2*0.06261
-  const = .5*rho2*A/m in 1/ft
-  c0 =0.07182*rho2*(5.125/mass)*(circumference/9.125)^2
-  beta is a constant
-  v02 = v01 * 1.467
-  v0x = 1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180)
-  v0y =1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180)
-  v0z = 1.467*v02*SIN(theta*PI()/180)
-  wx =(wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30
-  wy =(-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30
-  wz =(ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30
-  omega = =SQRT(wx^2+wy^2+wz^2)
-  romega =(circumference/2/PI())*omega/12
-  T2 =(5/9)*(T1-32)
-  elev2 = elev1/3.2808
-  vxw =vwind*1.467*SIN(phiwind*PI()/180)
-  vyw = vwind*1.467*COS(phiwind*PI()/180)
-  SVP = 4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2))
-  barometric_pressure2 = barometric_pressure1*1000/39.37
-  re100 = rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5)
-  
-  xf = 
-  
-  
-  INSERT INTO NEWTABLE
-  (field1, field2,......)
-  
-  Values(X,Y,3,4,5)
-
-
-CONSANTS A,1,2,3,4,5
+)
 
 INSERT INTO CALCULATIONS
 SELECT * FROM CONSTANTS, CALCULATIONS
@@ -125,6 +82,73 @@ vwind*1.467*COS(phiwind*PI()/180),
 4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2)),
 barometric_pressure1*1000/39.37,
 rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5));
+
+  
+CREATE TABLE HOMEPLATECROSSING
+(
+  xf decimal(18,4);
+  yf decimal(18,4);
+  zf decimal(18,4);
+  hangtime decimal(18,4);
+  vf decimal(18,4);
+)
+
+CREATE TABLE DATA
+(
+  
+)
+
+CREATE TABLE SUMMARY
+(
+  
+)
+
+CREATE TABLE ADAIR3
+(
+  cda decimal(18,4);
+  cba decimal(18,4);
+  vel decimal(18,4);
+  vel_2 decimal(18,4);
+  dv decimal(18,4);
+  dv_2 decimal(18,4);
+)
+INSERT INTO ADAIR3 
+SELECT * FROM CALCULATIONS, ADAIR3
+VALUES(0.5,
+-0.227,
+74.1*1.467*210000/Re100,
+vel/1.467,
+14.3*1.467*210000/Re100,
+dv/1.467);
+  
+*/
+  rho2=1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760)
+  rho1= rho2*0.06261
+  const = .5*rho2*A/m in 1/ft
+  c0 =0.07182*rho2*(5.125/mass)*(circumference/9.125)^2
+  beta is a constant
+  v02 = v01 * 1.467
+  v0x = 1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180)
+  v0y =1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180)
+  v0z = 1.467*v02*SIN(theta*PI()/180)
+  wx =(wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30
+  wy =(-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30
+  wz =(ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30
+  omega = =SQRT(wx^2+wy^2+wz^2)
+  romega =(circumference/2/PI())*omega/12
+  T2 =(5/9)*(T1-32)
+  elev2 = elev1/3.2808
+  vxw =vwind*1.467*SIN(phiwind*PI()/180)
+  vyw = vwind*1.467*COS(phiwind*PI()/180)
+  SVP = 4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2))
+  barometric_pressure2 = barometric_pressure1*1000/39.37
+  re100 = rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5)
+/*
+  
+  
+
+
+
 
 
 
