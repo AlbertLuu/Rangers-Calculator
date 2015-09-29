@@ -98,7 +98,7 @@ CREATE TABLE HOMEPLATECROSSING
             xMvmt decimal(18,4);
             yMvmt decimal(18,4);
           )
-          
+          INSERT INTO SUMMARY
           SELECT * FROM CONSTANTS, HOMEPLATECROSSING, SUMMARY, CALCULATIONS
           VALUES(
                   v0,
@@ -142,14 +142,15 @@ CREATE TABLE HOMEPLATECROSSING
          hangtime decimal(18,4);
          vf decimal(18,4);
      )
-          SELECT * FROM MISCCALCULATIONS
-          VALUES(
-                  timeX2-timeY3*(timeX2-timeX),
-                  timeY2-timeY3*(timeY2-timeY),
-                  timeZ2-timeY3*(timeZ2-timeZ),
-                  time2-time*(time2-timeY3)
-                  (timeVel2-timeY3*(timeVel2-timeVel))*3600/5280;
-                )
+    INSERT INTO CALCULATIONS
+    SELECT * FROM MISCCALCULATIONS
+    VALUES(
+             timeX2-timeY3*(timeX2-timeX),
+             timeY2-timeY3*(timeY2-timeY),
+             timeZ2-timeY3*(timeZ2-timeZ),
+             time2-time*(time2-timeY3)
+             (timeVel2-timeY3*(timeVel2-timeVel))*3600/5280;
+          )
 
 
 
