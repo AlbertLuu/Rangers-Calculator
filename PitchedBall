@@ -85,10 +85,7 @@ CREATE TABLE HOMEPLATECROSSING
             rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5);
           )
 
-CREATE TABLE DATA
-(
-  
-)
+
 
           CREATE TABLE SUMMARY
           (
@@ -137,7 +134,14 @@ CREATE TABLE DATA
               dv/1.467;
           )
 
-
+     CREATE TABLE HOMEPLATECROSSING
+     (
+        xf decimal(18,4);
+        yf decimal(18,4);
+        zf decimal(18,4);
+         hangtime decimal(18,4);
+         vf decimal(18,4);
+     )
           SELECT * FROM MISCCALCULATIONS
           VALUES(
                   timeX2-timeY3*(timeX2-timeX),
@@ -146,35 +150,36 @@ CREATE TABLE DATA
                   time2-time*(time2-timeY3)
                   (timeVel2-timeY3*(timeVel2-timeVel))*3600/5280;
                 )
-          
-          CREATE TABLE MISCCALCULATIONS
-          (
-            timeFlag (18,4);
-            timeFlag2 (18,4);
-            timeX (18,4);
-            timeX2 (18,4);
-            timeY (18,4);
-            timeY2 (18,4);
-            timeY3 (18,4);
-            timeZ (18,4);
-            timeZ2 (18,4);
-            time (18,4);
-            time2 (18,4);
-            timeVel (18,4);
-            timeVel2 (18,4);
-          )
 
 
 
 
-CREATE TABLE HOMEPLATECROSSING
+
+CREATE TABLE MISCCALCULATIONS
 (
-  xf decimal(18,4);
-  yf decimal(18,4);
-  zf decimal(18,4);
-  hangtime decimal(18,4);
-  vf decimal(18,4);
+    timeFlag (18,4);
+    timeFlag2 (18,4);
+    timeX (18,4);
+    timeX2 (18,4);
+    timeY (18,4);
+    timeY2 (18,4);
+    timeY3 (18,4);
+    timeZ (18,4);
+    timeZ2 (18,4);
+    time (18,4);
+    time2 (18,4);
+    timeVel2 (18,4);
 )
+ 
+CREATE TABLE DATA
+(
+  
+)
+
+
+
+
+
 
 
 
