@@ -163,7 +163,7 @@ GO
         y2 decimal(18,4);
     )
     
-    INSERT INTO DATA
+    INSERT INTO LINEAREXTRAPOLATION
     SELECT * FROM CONSTANTS, CALCULATIONS, LINEAREXTRAPOLATION  
     VALUES(
             x0,
@@ -194,6 +194,8 @@ CREATE TABLE MISCCALCULATIONS
     time2 decimal(18,4);
     timeVel2 decimal(18,4);
 )
+
+
  
 CREATE TABLE DATA
 (
@@ -220,8 +222,29 @@ CREATE TABLE DATA
     az decimal(18,4);
     flag decimal(18,4);
 )
-
-
+  INSERT INTO DATA
+  SELECT * FROM DATA, ADAIR3, CONSTANTS, CALCULATIONS,
+  VALUES(
+              dt,
+              SQRT(vx^2+vy^2+vz^2),
+              SQRT((vx-vxw)^2+(vyw-vyw)^2+vz^2),
+              ???????????????????,
+              (romega/vw)*EXP(-t/tau),
+              ?????????????????,
+              -const*Cd*vw*(vx-vxw),
+              -const*Cd*vw*(vy-vyw),
+              -const*Cd*vw*H30,
+              omega*EXP(-t/tau)*30/PI(),
+              const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw)),
+              const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz),
+              const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw)),
+              adragx + aMagx,
+              adragy + aMagy,
+              adragz + aMagz -32.174,
+              ?????????????????????????????????;
+        )
+  
+  
 
 
 
@@ -266,7 +289,7 @@ CREATE TABLE DATA
   
   
   
-  t = dt
+ t = dt
   v=SQRT(vx^2+vy^2+vz^2)
   vw = SQRT((vx-vxw)^2+(vyw-vyw)^2+vz^2)
   Cd = if(drag == 1)
@@ -299,28 +322,6 @@ CREATE TABLE DATA
             1
         else
             0
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-) 
-
-
-  
-  
-  
-  
-  
-)
 
 
 
