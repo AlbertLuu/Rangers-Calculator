@@ -164,7 +164,7 @@ GO
     )
     
     INSERT INTO DATA
-    SELECT * FROM CONSTANTS, CALCULATIONS, LINEAREXTRAPOLATION
+    SELECT * FROM CONSTANTS, CALCULATIONS, LINEAREXTRAPOLATION  
     VALUES(
             x0,
             x0+(v0x/v0y)*(y1-y2),
@@ -237,6 +237,8 @@ CREATE TABLE DATA
 
 
 
+
+
   
 */
   rho2=1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760)
@@ -264,9 +266,39 @@ CREATE TABLE DATA
   
   
   
-  
-  
-/*
+  t = dt
+  v=SQRT(vx^2+vy^2+vz^2)
+  vw = SQRT((vx-vxw)^2+(vyw-vyw)^2+vz^2)
+  Cd = if(drag == 1)
+            (cda+cdb/(1+EXP(-(vw-vel)/dv)))
+        else if(drag == 2)
+            cd
+        else
+            0
+  S = (romega/vw)*EXP(-t/tau)
+  Cl = if(Magnus == 1)
+            if(S < <0.1)
+                1.5*S
+            else
+                0.09+0.6*S
+        else if(Magnus ==2)
+            1/(2.32+0.4/S)
+        else
+            0
+  adragx = -const*Cd*vw*(vx-vxw)
+  adragy = -const*Cd*vw*(vy-vyw)
+  adragz = -const*Cd*vw*H30
+  w = omega*EXP(-t/tau)*30/PI()
+  aMagx = const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw))
+  aMagy = const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz)
+  aMagz = const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw))
+  ax = adragx + aMagx
+  ay = adragy + aMagy
+  az = adragz + aMagz -32.174
+  flag = if(((y-17/12)*((y+vy*dt+0.5ay*dt*dt)-17/12)<0)
+            1
+        else
+            0
   
   
 
