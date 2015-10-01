@@ -224,6 +224,7 @@ CREATE TABLE DATA
 )
   INSERT INTO DATA
   SELECT * FROM DATA, ADAIR3, CONSTANTS, CALCULATIONS,
+  if(
   VALUES(
               dt,
               SQRT(vx^2+vy^2+vz^2),
@@ -323,5 +324,13 @@ CREATE TABLE DATA
         else
             0
 
+int f = 0;
+while(flag != 1)
+{
+    if(((y-17/12)*((y+vy*dt+0.5ay*dt*dt)-17/12)<0)
+}
+
+if(((y-17/12)*((y+vy*dt+0.5ay*dt*dt)-17/12)<0)
 
 
+vz, vy, vx, z, y, x, t
