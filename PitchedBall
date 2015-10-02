@@ -61,6 +61,7 @@ GO
 
     INSERT INTO CALCULATIONS
     SELECT * FROM CONSTANTS, CALCULATIONS, HOMEFIELDCROSSING
+    WHERE constant_id = calculation_id
     VALUES(
             1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,
             rho2*0.06261,
@@ -334,3 +335,6 @@ if(((y-17/12)*((y+vy*dt+0.5ay*dt*dt)-17/12)<0)
 
 
 vz, vy, vx, z, y, x, t
+
+
+truncate, delete*From table x
