@@ -1,0 +1,60 @@
+USE PitchedBall;
+GO
+DELETE FROM CONSTANTS;
+GO
+INSERT INTO CONSTANTS
+VALUES(
+        1,
+    		5.125,
+    		9.125,
+    		-1.0,
+    		55.0,
+    		6.0,
+    		95.0,
+    		-2.0,
+    		179,
+    		1500,
+    		1000,
+    		0,
+    		10000,
+    		0.001,
+    		75.0,
+    		0.0,
+    		0.0,
+    		0.0,
+    		50.0,
+    		29.92,
+    		0.0001217,
+    		0.330,
+    		2,
+    		2);
+		
+/*
+ INSERT INTO CALCULATIONS
+    SELECT * FROM CONSTANTS, CALCULATIONS
+    WHERE constant_pk = calculations_pk
+    VALUES(
+            1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),
+            rho2*0.06261,
+            c0,
+            0.07182*rho2*(5.125/mass)*(circumference/9.125)^2,
+            beta,
+            v01 * 1.467,
+            1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180),
+            1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180),
+            1.467*v02*SIN(theta*PI()/180),
+            (wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30,
+            (-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30,
+            (ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30,
+            SQRT(wx^2+wy^2+wz^2),
+            (circumference/2/PI())*omega/12,
+            (5/9)*(T1-32),
+            elev1/3.2808,
+            vwind*1.467*SIN(phiwind*PI()/180),
+            vwind*1.467*COS(phiwind*PI()/180),
+            4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2)),
+            barometric_pressure1*1000/39.37,
+            rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5),
+            vf/v0
+          );
+*/
