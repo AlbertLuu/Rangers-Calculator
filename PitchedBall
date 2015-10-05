@@ -150,7 +150,7 @@ GO
          hangtime decimal(18,4);
          vf decimal(18,4);
      )
-    INSERT INTO CALCULATIONS
+    INSERT INTO HOMEPLATECALCULATOINS
     SELECT * FROM MISCCALCULATIONS
     VALUES(
              timeX2-timeY3*(timeX2-timeX),
@@ -205,6 +205,21 @@ CREATE TABLE MISCCALCULATIONS
     timeVel2 decimal(18,4);
 )
 
+INSERT INTO MISC
+SELECT * FROM TEMP, MISC
+VALUES(PK WHERE FLAG = 1 + 29
+       timeFlag + 1
+       VALUE OF X WHEN TIME IS timeFlag
+       VALUE OF X WHEN TIME IS timeFLAG2
+       VALUE OF Y WHEN TIME IS timeFlag
+       VALUE OF Y WHEN TIME is timeFLag2
+       (timeFlag2-17/12)/(timeFlag2-timeFlag1)
+       VALUE OF Z WHEN TIME IS timeFlag
+       VALUE OF Z WHEN TIME IS timeFlag2
+       TIME AT timeFlag
+       Time AT timeFlag2
+       Velocity at timeFlag
+       Velocity at timeFLag2
 
  
 CREATE TABLE DATA
@@ -233,11 +248,18 @@ CREATE TABLE DATA
     az decimal(18,4);
     flag decimal(18,4);
 )
+
   INSERT INTO DATA
   SELECT * FROM DATA, ADAIR3, CONSTANTS, CALCULATIONS,
-  if(
   VALUES(
-              dt,
+              TIME INCREMENTED BY .001 STARTING AT 0.000\
+              x0
+              y0
+              z0
+              SQRT(x0^2+y0^2)
+              v0x
+              v0y
+              v0z
               SQRT(vx^2+vy^2+vz^2),
               SQRT((vx-vxw)^2+(vyw-vyw)^2+vz^2),
               ???????????????????,
@@ -256,8 +278,38 @@ CREATE TABLE DATA
               ?????????????????????????????????;
         )
   
+  /////for second row on
+  INSERT INTO DATA
+  SELECT * FROM DATA, ADAIR3, CONSTANTS, CALCULATIONS,
+  WHERE pk_temp = pk_temp - 1
+  VALUES(
+              TIME INCREMENTED BY .001 STARTING AT 0.000\
+              x0+ vx*dt+0.5*ax*dt*dt
+              y0+vy*dt+0.5*ay*dt*dt
+              z0+ vz*dt+0.5*az*dt*dt
+              SQRT(x0^2+y0^2) ( SAME ROW )
+              vx + ax * dt
+              vy + ay *dt
+              vz + az * dt
+              SQRT(vx^2+vy^2+vz^2), ( SAME ROW)
+              SQRT((vx-vxw)^2+(vyw-vyw)^2+vz^2), (SAME ROW)
+              ???????????????????, (SAME ROW)
+              (romega/vw)*EXP(-t/tau),
+              ?????????????????,
+              -const*Cd*vw*(vx-vxw),
+              -const*Cd*vw*(vy-vyw),
+              -const*Cd*vw*H30,
+              omega*EXP(-t/tau)*30/PI(),
+              const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw)),
+              const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz),
+              const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw)),
+              adragx + aMagx,
+              adragy + aMagy,
+              adragz + aMagz -32.174,
+              ?????????????????????????????????; (NEXT ROW)(CAN DO MATH)
+        )
   
-
+GO 1126
 
 
 
