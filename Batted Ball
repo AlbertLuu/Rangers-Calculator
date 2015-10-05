@@ -1,6 +1,242 @@
-CREATE DATABSE BATTED BALL
+   CREATE TABLE HOMEPLATECROSSING
+     (
+        homeplatecrossing_pk int(18,4);
+        xf decimal(18,4);
+        yf decimal(18,4);
+        zf decimal(18,4);
+         hangtime decimal(18,4);
+         range decimal(18,4);//////////////////
+     )
+    INSERT INTO HOMEPLATECALCULATOINS
+    SELECT * FROM MISCCALCULATIONS
+    VALUES(
+             timeX2 + timeZ3  *(timeX2- timeX1)
+             timeY2-timeZ3*(timeY2-timeY1)
+             timeZ2-timeZ3*(timeZ2-timeZ),
+             time2-time*(time2-timeZ3),
+             time2-time*(time2-timeZ3)
+             SQRT(yf^2+xf^2)
+          )
 
-CREATE TABLE VARIABLES
-CREATE TABLE ADAIR3
-CREATE TABLE LANDINGPOINT
+
+CREATE TABLE MISCCALCULATIONS
+(
+    misccalculations_pk int(18,4);
+    timeFlag decimal(18,4);
+    timeFlag2 decimal(18,4);
+    timeX decimal(18,4);
+    timeX2 decimal(18,4);
+    timeY decimal(18,4);
+    timeY2 decimal(18,4);
+    timeZ decimal(18,4);
+    timeZ2 decimal(18,4);
+    timeZ3 decimal(18,4);///////////
+    time decimal(18,4);
+    time2 decimal(18,4);
+    timeVel decimal(18,4)
+    timeVel2 decimal(18,4);
+)
+
+INSERT INTO MISC
+SELECT * FROM TEMP, MISC
+VALUES(PK WHERE FLAG = 1 + 29
+       timeFlag + 1
+       VALUE OF X WHEN TIME IS timeFlag
+       VALUE OF X WHEN TIME IS timeFLAG2
+       VALUE OF Y WHEN TIME IS timeFlag
+       VALUE OF Y WHEN TIME is timeFLag2
+       VALUE OF Z WHEN TIME IS timeFlag
+       VALUE OF Z WHEN TIME IS timeFlag2
+       timeZ2/(timeZ2-timeZ1)
+       TIME AT timeFlag
+       Time AT timeFlag2
+       Velocity at timeFlag
+       Velocity at timeFLag2
+
+ 
 CREATE TABLE DATA
+(
+    data_pk int(18,4);
+    t decimal(18,4);
+    x decimal(18,4);
+    y decimal(18,4);
+    z decimal(18,4);
+    r decimal(18,4);
+    phi decimal(18,4);
+    vx decimal(18,4);
+    vy decimal(18,4);
+    vz decimal(18,4);
+    v decimal(18,4);
+    vw decimal(18,4);
+    cd decimal(18,4);
+    s decimal(18,4);
+    cl decimal(18,4);
+    vxw decimal(18,4);
+    vyw decimal(18,4);
+    adragx decimal(18,4);
+    adragy decimal(18,4);
+    adragz decimal(18,4);
+    w decimal(18,4);
+    aMagx decimal(18,4);
+    aMagy decimal(18,4);
+    aMagz decimal(18,4);
+    ax decimal(18,4);
+    ay decimal(18,4);
+    az decimal(18,4);
+    flag decimal(18,4);
+)
+
+  INSERT INTO DATA
+  SELECT * FROM DATA, ADAIR3, CONSTANTS, CALCULATIONS,
+  VALUES(
+              TIME INCREMENTED BY .001 STARTING AT 0.000\
+              x0
+              y0
+              z0
+              SQRT(x0^2+y0^2)
+              ATAN2(y,x)*180/PI()
+              v0x
+              v0y
+              v0z
+              SQRT(vx^2+vy^2+vz^2),
+              ??????????????????????????????????,
+              ???????????????????,
+              (romega/vw)*EXP(-t/tau),
+              ?????????????????,
+              ????????????????,
+              ??????????????????????????//,
+              -const*Cd*vw*(vx - vxw),
+              -const*cd*vw*(vy-vyw)
+              -const*cd*vw*vz
+              omega*EXP(-t/tau)*30/PI(),
+              const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw)),
+              const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz),
+              const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw)),
+              adragx + aMagx,
+              adragy + aMagy,
+              adragz + aMagz -32.174,
+              ?????????????????????????????????;
+        )
+  
+  /////for second row on
+  INSERT INTO DATA
+  SELECT * FROM DATA, ADAIR3, CONSTANTS, CALCULATIONS,
+  WHERE pk_temp = pk_temp - 1
+  VALUES(
+              TIME INCREMENTED BY .001 STARTING AT 0.000\
+              x0+ vx*dt+0.5*ax*dt*dt
+              y0+vy*dt+0.5*ay*dt*dt
+              z0+ vz*dt+0.5*az*dt*dt
+              SQRT(x0^2+y0^2) ( SAME ROW )
+              vx + ax * dt
+              vy + ay *dt
+              vz + az * dt
+              SQRT(vx^2+vy^2+vz^2), ( SAME ROW)
+              SQRT((vx-vxw)^2+(vyw-vyw)^2+vz^2), (SAME ROW)
+              ???????????????????, (SAME ROW)
+              (romega/vw)*EXP(-t/tau),
+              ?????????????????,
+              -const*Cd*vw*(vx-vxw),
+              -const*Cd*vw*(vy-vyw),
+              -const*Cd*vw*H30,
+              omega*EXP(-t/tau)*30/PI(),
+              const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw)),
+              const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz),
+              const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw)),
+              adragx + aMagx,
+              adragy + aMagy,
+              adragz + aMagz -32.174,
+              ?????????????????????????????????; (NEXT ROW)(CAN DO MATH)
+        )
+  
+GO 1126
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+*/
+  rho2=1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760)
+  rho1= rho2*0.06261
+  const = .5*rho2*A/m in 1/ft
+  c0 =0.07182*rho2*(5.125/mass)*(circumference/9.125)^2
+  beta is a constant
+  v02 = v01 * 1.467
+  v0x = 1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180)
+  v0y =1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180)
+  v0z = 1.467*v02*SIN(theta*PI()/180)
+  wx =(wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30
+  wy =(-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30
+  wz =(ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30
+  omega = =SQRT(wx^2+wy^2+wz^2)
+  romega =(circumference/2/PI())*omega/12
+  T2 =(5/9)*(T1-32)
+  elev2 = elev1/3.2808
+  vxw =vwind*1.467*SIN(phiwind*PI()/180)
+  vyw = vwind*1.467*COS(phiwind*PI()/180)
+  SVP = 4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2))
+  barometric_pressure2 = barometric_pressure1*1000/39.37
+  re100 = rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5)
+  
+  
+  
+  
+ t = dt
+  v=SQRT(vx^2+vy^2+vz^2)
+  vw = SQRT((vx-vxw)^2+(vyw-vyw)^2+vz^2)
+  Cd = if(drag == 1)
+            (cda+cdb/(1+EXP(-(vw-vel)/dv)))
+        else if(drag == 2)
+            cd
+        else
+            0
+  S = (romega/vw)*EXP(-t/tau)
+  Cl = if(Magnus == 1)
+            if(S < <0.1)
+                1.5*S
+            else
+                0.09+0.6*S
+        else if(Magnus ==2)
+            1/(2.32+0.4/S)
+        else
+            0
+  adragx = -const*Cd*vw*(vx-vxw)
+  adragy = -const*Cd*vw*(vy-vyw)
+  adragz = -const*Cd*vw*H30
+  w = omega*EXP(-t/tau)*30/PI()
+  aMagx = const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw))
+  aMagy = const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz)
+  aMagz = const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw))
+  ax = adragx + aMagx
+  ay = adragy + aMagy
+  az = adragz + aMagz -32.174
+  flag = if(((y-17/12)*((y+vy*dt+0.5ay*dt*dt)-17/12)<0)
+            1
+        else
+            0
+
+int f = 0;
+while(flag != 1)
+{
+    if(((y-17/12)*((y+vy*dt+0.5ay*dt*dt)-17/12)<0)
+}
+
+if(((y-17/12)*((y+vy*dt+0.5ay*dt*dt)-17/12)<0)
+
+
+vz, vy, vx, z, y, x, t
+
+
+truncate, delete*From table x
