@@ -45,6 +45,7 @@ GO
       beta decimal(18,4);
       v0 decimal(18,4);
       v0x decimal(18,4);
+      v0y decimal(18,4)
       v0z decimal(18,4);
       wx decimal(18,4);
       wy decimal(18,4);
@@ -65,9 +66,9 @@ GO
     SELECT * FROM CONSTANTS, CALCULATIONS, HOMEFIELDCROSSING
     WHERE constant_id = calculation_id
     VALUES(
-            1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),2,3, FIELD 4 *2,
+            1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),
             rho2*0.06261,
-            .5*rho2*
+            c0
             0.07182*rho2*(5.125/mass)*(circumference/9.125)^2,
             beta,
             v01 * 1.467,
@@ -200,6 +201,7 @@ CREATE TABLE MISCCALCULATIONS
     timeZ2 decimal(18,4);
     time decimal(18,4);
     time2 decimal(18,4);
+    timeVel decimal(18,4)
     timeVel2 decimal(18,4);
 )
 
@@ -346,3 +348,5 @@ vz, vy, vx, z, y, x, t
 
 
 truncate, delete*From table x
+
+
