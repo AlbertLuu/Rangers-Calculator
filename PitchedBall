@@ -249,6 +249,10 @@ CREATE TABLE DATA
     flag decimal(18,4);
 )
 
+ inx =  if(x = 5)
+    x = 2
+  else
+    x = 3
   INSERT INTO DATA
   SELECT * FROM DATA, ADAIR3, CONSTANTS, CALCULATIONS,
   VALUES(
