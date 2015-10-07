@@ -170,6 +170,42 @@ VALUES(
 	where 
 		calculations_pk = @x;
 	
+	INSERT INTO ADAIR3
+	VALUES(@x,null,null,null,null,null,null);
+	
+	
+	update 
+		adair3 
+	set
+		cda = 0.5,
+		cba = -0.227,
+		vel = 74.1*1.467*210000/calculations.Re100,
+		vel_2 = vel/1.467,
+		dv = 14.3*1.467*210000/calculations.Re100,
+		dv_2 = dv/1.467
+	from
+		calculations, adair3
+	where
+		adair3_pk = @x;
+
+	Insert Into LinearExtrapolation
+	Values(@x,null,null,null,null,null,null);
+
+	update 
+		LinearExtrapolation
+	set
+		y1 = calculations.y0,
+		y2 = 0,
+		x1 = constants.x0,
+		x2 = constants.x0 + (calculations.v0x/calculations.v0y)*(y1-y2),
+		z1 = constants.z0,
+		z2 = constants.z0 + (calculations.v0z/calculations.v0y)*(y1-y2),
+		
+	from
+		constants, calculations, adair3
+	where
+		adair3_pk = @x;
+	
 
 
 
