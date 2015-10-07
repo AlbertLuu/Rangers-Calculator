@@ -2,6 +2,12 @@ USE PitchedBall;
 GO
 DELETE FROM CONSTANTS;
 GO
+
+USE PitchedBall;
+GO
+DELETE FROM calculations
+GO
+
 INSERT INTO CONSTANTS
 VALUES(
         1,
@@ -28,33 +34,147 @@ VALUES(
     		0.330,
     		2,
     		2);
-		
-/*
- INSERT INTO CALCULATIONS
-    SELECT * FROM CONSTANTS, CALCULATIONS
-    WHERE constant_pk = calculations_pk
-    VALUES(
-            1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev)-0.3783* relative_humidity*SVP/100)/760),
-            rho2*0.06261,
-            c0,
-            0.07182*rho2*(5.125/mass)*(circumference/9.125)^2,
-            beta,
-            v01 * 1.467,
-            1.467*v02*COS(theta*PI()/180)*SIN(phi*PI()/180),
-            1.467*v02*COS(theta*PI()/180)*COS(phi*PI()/180),
-            1.467*v02*SIN(theta*PI()/180),
-            (wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v02)*PI()/30,
-            (-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v02)*PI()/30,
-            (ws*COS(theta*PI()/180)+wg*v0z/v02)*PI()/30,
-            SQRT(wx^2+wy^2+wz^2),
-            (circumference/2/PI())*omega/12,
-            (5/9)*(T1-32),
-            elev1/3.2808,
-            vwind*1.467*SIN(phiwind*PI()/180),
-            vwind*1.467*COS(phiwind*PI()/180),
-            4.5841*EXP((18.687-temp2/234.5)*temp2/(257.14+temp2)),
-            barometric_pressure1*1000/39.37,
-            rho2*44.7*(circumference/(PI()*39.37))*(temp2+273.16+120)/(0.000001512*(temp2+273.16)^1.5),
-            vf/v0
-          );
+	SELECT * FROM constants;
+
+	declare @x int;
+	set @x = 1;
+
+	Insert Into calculations
+	Values(@x,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+	
+
+	
+	declare @v0 decimal(18,4);
+	Select @v0 = constants.v01 * 1.467
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0 = @v0
+	where calculations_pk = @x;
+
+	
+	declare @v0x decimal(18,4);
+	Select @v0x = 1.467*constants.v01*COS(constants.theta*PI()/180)*SIN(constants.phi*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0x = @v0x
+	where calculations_pk = @x;
+	
+
+	declare @v0y decimal(18,4);
+	Select @v0y = 1.467*constants.v01*COS(constants.theta*PI()/180)*COS(constants.phi*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0y = @v0y
+	where calculations_pk = @x;
+
+
+	declare @v0z decimal(18,4);
+	Select @v0z = 1.467*constants.v01*SIN(constants.theta*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0z= @v0z
+	where calculations_pk = @x;
+
+	
+	declare @T2 decimal(18,4);
+	Select @T2 = (5/9)*(constants.T1-32)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set T2= @T2
+	where calculations_pk = @x;
+
+
+	declare @elev2 decimal(18,4);
+	Select @elev2 = constants.elev1/3.2808
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set elev2= @elev2
+	where calculations_pk = @x;
+
+
+	declare @vxw decimal(18,4);
+	Select @vxw = constants.vwind*1.467*SIN(constants.phiwind*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set vxw = @vxw
+	where calculations_pk = @x;
+
+
+	declare @vyw decimal(18,4);
+	Select @vyw = constants.vwind*1.467*COS(constants.phiwind*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set vyw = @vyw
+	where calculations_pk = @x;
+
+
+	
+
+	declare @barometric_pressure2 decimal(18,4);
+	Select @barometric_pressure2 = barometric_pressure1*1000/39.37
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set barometric_pressure2 = @barometric_pressure2
+	where calculations_pk = @x;
+
+	
+
+
+	declare @relative_humidity decimal(18,4);
+	Select @relative_humidity = constants.relative_humidity
+	from constants
+	where constant_pk = @x;
+
+	declare @beta decimal(18,4);
+	Select @beta = constants.beta
+	from constants
+	where constant_pk = @x;
+
+
+
+	update 
+		calculations
+	set	
+		rho2 = 1.2929*(273/(T2+273)*(barometric_pressure2*EXP(constants.beta*-1*elev2)-0.3783*constants.relative_humidity*SVP/100)/760),
+		rho1 = rho2 *0.06261,
+		c0 = 0.07182*rho1*(5.125/constants.mass)*POWER((constants.circumference/9.125),2),
+		const = c0,
+		wx = (constants.wb*COS(constants.phi*PI()/180)*constants.ws*-1*SIN(constants.theta*PI()/180)*SIN(constants.phi*PI()/180)+constants.wg*v0x/v0)*PI()/30,
+		wy = (-1*constants.wb*SIN(constants.phi*PI()/180)*-1*constants.ws*SIN(constants.theta*PI()/180)*COS(constants.phi*PI()/180)+constants.wg*v0y/v0)*PI()/30,
+		wz = (constants.ws*COS(constants.theta*PI()/180)+constants.wg*v0z/v0)*PI()/30,
+		omega = SQRT( POWER(wx,2) + power(wy,2) + power(wz,2) ),
+		romega = ((constants.circumference/2)/PI())*omega/12,
+		SVP = 4.5841*EXP((18.687-T2/234.5)*T2/(257.14+T2)),
+		barometric_pressure2 = constants.barometric_pressure1*1000/39.37,
+		re100 = rho2*44.7*(constants.circumference/(PI()*39.37))*(T2+273.16+120)/(0.000001512*Power(T2+273.16,1.5))
+	from
+		constants, calculations
+	where 
+		calculations_pk = @x;
+	
+
+
+
+	
+	
+	select * from calculations;
+
 */
