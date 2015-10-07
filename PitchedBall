@@ -37,29 +37,28 @@ GO
   
     CREATE TABLE CALCULATIONS
     (
-      calculations_pk int(18,4);
-      rho1 decimal(18,4);// rho2
-      rho2 decimal(18,4);// beta, T, elev, SVP, barometric_pressure
-      const decimal(18,4); //   c0
-      c0 decimal(18,4);// rho1
-      beta decimal(18,4);
-      v0 decimal(18,4);
-      v0x decimal(18,4);
-      v0y decimal(18,4)
-      v0z decimal(18,4);
-      wx decimal(18,4);//v0, v0x
-      wy decimal(18,4);//v0, v0y
-      wz decimal(18,4);//v0, v0z
-      omega decimal(18,4);// wx, wy, wz
-      romega decimal(18,4);//omega
-      T2 decimal(18,4);
-      elev2 decimal(18,4);
-      vxw decimal(18,4);
-      vyw decimal(18,4);
-      SVP decimal(18,4);// T2
-      barometric_pressure2 decimal(18,4);//rho2, T2
-      re100 decimal(18,4);
-      vf_v0 decimal(18,4);
+      calculations_pk int(18,4); done
+      rho1 decimal(18,4);// rho2 done
+      rho2 decimal(18,4);// beta, T, elev, SVP, barometric_pressure done
+      const decimal(18,4); //   c0 done
+      c0 decimal(18,4);// rho1 done
+      v0 decimal(18,4); done
+      v0x decimal(18,4);done
+      v0y decimal(18,4)done
+      v0z decimal(18,4);done
+      wx decimal(18,4);//v0, v0x done
+      wy decimal(18,4);//v0, v0y done
+      wz decimal(18,4);//v0, v0z done
+      omega decimal(18,4);// wx, wy, wz done
+      romega decimal(18,4);//omega done
+      T2 decimal(18,4);done
+      elev2 decimal(18,4);done
+      vxw decimal(18,4);done
+      vyw decimal(18,4);done
+      SVP decimal(18,4);// T2 done
+      barometric_pressure2 decimal(18,4);//rho2, T2done
+      re100 decimal(18,4);// done
+     //////////// vf_v0 decimal(18,4);
     )
 
     INSERT INTO CALCULATIONS
