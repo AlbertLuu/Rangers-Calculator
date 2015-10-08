@@ -232,8 +232,11 @@ declare @ay_temp decimal(18,3);
 declare @az_temp decimal(18,3);
 declare @flag_temp decimal(18,3);
 
+
+
+set @time_temp = 0;
 insert into temp
-values(@x,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+values(time_temp,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 update
 	temp
 set
@@ -241,29 +244,97 @@ set
 	y = constants.y0,
 	z = constants.z0,
 	r = SQRT(power(constants.x0,2)+power(constants.y0,2),
-	vx = v0x,
-	vy = v0y,
-	vz = v0z,
+	vx = calculations.v0x,
+	vy = calculations.v0y,
+	vz = calculations.v0z,
 	v = SQRT(power(constants.vx,2)+power(constants.vy,2) + power(constants.vz,2)),
-	vw = SQRT(power(vx-vxw,2) + power(vyw-vyw,2)+power(vz,2)),
-	cd = 
-	s = (constants.romega/constants.vw)*EXP(-t/constants.tau),
+	vw = SQRT(power(vx-calculations.vxw,2) + power(calculations.vyw-calculations.vyw,2)+power(vz,2)),
+from 
+	constants, calculations, temp
+where 
+	time_temp = 0;	
+	
+	
+if(	
+	
+	
+update
+	temp
+set
+	cd =  
+from 
+	constants, calculations, temp
+where 
+	time_temp = 0;	
+	
+	
+	
+	
+	
+update
+	temp
+set
+	s = (constants.romega/vw)*EXP(-t/constants.tau),
+from 
+	constants, calculations, temp
+where 
+	time_temp = 0;	
+	
+	
+	
+	
+	
+update
+	temp
+set
 	cl = 
+from 
+	constants, calculations, temp
+where 
+	time_temp = 0;	
+	
+	
+	
+	
+update
+	temp
+set
 	adragx = -constants.const*Cd*vw*(vx-calculations.vxw)
-	adragy = -const*Cd*vw*(vy-vyw)
-	adragz = -const*Cd*vw*vz
-	w = omega*EXP(-t/tau)*30/PI()
-	amagx = const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw))
-	amagy = const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz),
-	amagz = const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw)),
+	adragy = -1*calculations.const*Cd*vw*(vy-calculations.vyw)
+	adragz = -1*calculations.const*Cd*vw*vz
+	w = omega*EXP((-1*@time_temp)/constants.tau)*30/PI()
+	amagx = calculations.const*(Cl/calculations.omega)*vw*(calculations.wy*vz-calculations.wz*(vy-calculations.vyw))
+	amagy = calculations.const*(Cl/calculations.omega)*vw*(calculations.wz*(vx-calculations.vxw)-calculations.wx*vz),
+	amagz = calculations.const*(Cl/calculations.omega)*vw*(calculations.wx*(vy-calculations.vyw)-calculations.wy*(vx-calculations.vxw)),
 	ax = adragx + aMagx,
 	ay = adragy + aMagy,
 	az = adragz + aMagz -32.174,
+from 
+	constants, calculations, temp
+where 
+	time_temp = 0;
+	
+	
+	
+	
+	
+	
+	
+update
+	temp
+set
 	flag = 
-from
-
-set @time = 0;
-while(@time < 1.126)
+from 
+	constants, calculations, temp
+where
+	time_temp = 0;
+	
+	
+	
+	
+	
+@time_temp += .001;
+while(@time_temp < 1.126)
 begin
 	
 	
