@@ -207,10 +207,72 @@ VALUES(
 		adair3_pk = @x;
 	
 
+declare @time_temp decimal(18,3);
+declare @x_temp decimal(18,3);
+declare @y_temp decimal(18,3);
+declare @z_temp decimal(18,3);
+declare @r_temp decimal(18,3);
+declare @vx_temp decimal(18,3);
+declare @vy_temp decimal(18,3);
+declare @vz_temp decimal(18,3);
+declare @v_temp decimal(18,3);
+declare @vw_temp decimal(18,3);
+declare @cd_temp decimal(18,3);
+declare @s_temp decimal(18,3);
+declare @cl_temp decimal(18,3);
+declare @adragx_temp decimal(18,3);
+declare @adragy_temp decimal(18,3);
+declare @adragz_temp decimal(18,3);
+declare @w_temp decimal(18,3);
+declare @amagx_temp decimal(18,3);
+declare @amagy_temp decimal(18,3);
+declare @amagz_temp decimal(18,3);
+declare @ax_temp decimal(18,3);
+declare @ay_temp decimal(18,3);
+declare @az_temp decimal(18,3);
+declare @flag_temp decimal(18,3);
 
+insert into temp
+values(@x,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+update
+	temp
+set
+	x = constants.x0,
+	y = constants.y0,
+	z = constants.z0,
+	r = SQRT(power(constants.x0,2)+power(constants.y0,2),
+	vx = v0x,
+	vy = v0y,
+	vz = v0z,
+	v = SQRT(power(constants.vx,2)+power(constants.vy,2) + power(constants.vz,2)),
+	vw = SQRT(power(vx-vxw,2) + power(vyw-vyw,2)+power(vz,2)),
+	cd = 
+	s = (constants.romega/constants.vw)*EXP(-t/constants.tau),
+	cl = 
+	adragx = -constants.const*Cd*vw*(vx-calculations.vxw)
+	adragy = -const*Cd*vw*(vy-vyw)
+	adragz = -const*Cd*vw*vz
+	w = omega*EXP(-t/tau)*30/PI()
+	amagx = const*(Cl/omega)*vw*(wy*vz-wz*(vy-vyw))
+	amagy = const*(Cl/omega)*vw*(wz*(vx-vxw)-wx*vz),
+	amagz = const*(Cl/omega)*vw*(wx*(vy-vyw)-wy*(vx-vxw)),
+	ax = adragx + aMagx,
+	ay = adragy + aMagy,
+	az = adragz + aMagz -32.174,
+	flag = 
+from
 
+set @time = 0;
+while(@time < 1.126)
+begin
 	
 	
+	
+	
+	
+	@time += .001
+	
+end	
 	select * from calculations;
 
 */
