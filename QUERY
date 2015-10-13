@@ -8,32 +8,37 @@ GO
 DELETE FROM calculations
 GO
 
+USE PitchedBall;
+GO
+DELETE FROM temp
+GO
+
 INSERT INTO CONSTANTS
 VALUES(
-        1,
-    		5.125,
-    		9.125,
-    		-1.0,
-    		55.0,
-    		6.0,
-    		95.0,
-    		-2.0,
-    		179,
-    		1500,
-    		1000,
-    		0,
-    		10000,
-    		0.001,
-    		75.0,
-    		0.0,
-    		0.0,
-    		0.0,
-    		50.0,
-    		29.92,
-    		0.0001217,
-    		0.330,
-    		2,
-    		2);
+        1,			/*constant_pk*/
+    		5.125,  /*mass*/
+    		9.125,	/*circumference*/
+    		-1.0,	/*x01*/
+    		55.0,	/*y01*/
+    		6.0,	/*z01*/
+    		95.0,	/*v01*/
+    		-2.0,	/*theta*/
+    		179,	/*phi*/
+    		1500,	/*wb*/
+    		1000,	/*ws*/
+    		0,		/*wg*/
+    		10000,	/*tau*/
+    		0.001,	/*dt*/
+    		75.0,	/*Temp (farenheit)*/
+    		0.0,	/*elev (ft)*/
+    		0.0,	/*vwind*/
+    		0.0,	/*phiwind*/
+    		50.0,	/*relative humidity*/
+    		29.92,	/*barometric pressure (in Hg) */
+    		0.0001217,	/*beta*/
+    		0.330,		/*constant cd*/
+    		2,			/*drag*/
+    		2);			/*magnus*/
 	SELECT * FROM constants;
 
 	declare @x int;
@@ -178,7 +183,7 @@ VALUES(
 		adair3 
 	set
 		cda = 0.5,
-		cba = -0.227,
+		cdb = -0.227,
 		vel = 74.1*1.467*210000/calculations.Re100,
 		vel_2 = vel/1.467,
 		dv = 14.3*1.467*210000/calculations.Re100,
@@ -194,19 +199,18 @@ VALUES(
 	update 
 		LinearExtrapolation
 	set
-		y1 = calculations.y0,
+		y1 = constants.y01,
 		y2 = 0,
-		x1 = constants.x0,
-		x2 = constants.x0 + (calculations.v0x/calculations.v0y)*(y1-y2),
-		z1 = constants.z0,
-		z2 = constants.z0 + (calculations.v0z/calculations.v0y)*(y1-y2),
-		
+		x1 = constants.x01,
+		x2 = constants.x01 + (calculations.v0x/calculations.v0y)*(y1-y2),
+		z1 = constants.z01,
+		z2 = constants.z01 + (calculations.v0z/calculations.v0y)*(y1-y2)
 	from
 		constants, calculations, adair3
 	where
 		adair3_pk = @x;
 	
-
+	
 declare @time_temp decimal(18,3);
 declare @x_temp decimal(18,3);
 declare @y_temp decimal(18,3);
@@ -231,108 +235,112 @@ declare @ax_temp decimal(18,3);
 declare @ay_temp decimal(18,3);
 declare @az_temp decimal(18,3);
 declare @flag_temp decimal(18,3);
+declare @test1 int;
+declare @test2 int;
+declare @test3 int;
+declare @test4 int;
+
+set @time_temp= 0;
+
+select @test1 = constants.drag
+from constants
+where constant_pk = @x;
+
+select @test2 = constants.magnus
+from constants
+where constant_pk = @x;
+
+if(@test1 = 1)
+	Begin
+		select @cd_temp = (adair3.cda+adair3.cdb/(1+EXP(-(temp.vw-adair3.vel)/adair3.dv)))
+		from adair3,temp
+		where adair3_pk = @x;
+	End
+else if (@test1 = 2)
+	begin
+		select @cd_temp = constants.constantCD
+		from constants
+		where constant_pk = @x;
+	end
+else
+	begin
+		set @cd_temp = 0;
+	end
+
+
 
 
 
 set @time_temp = 0;
 insert into temp
-values(time_temp,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+values(@time_temp,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+
 update
 	temp
 set
-	x = constants.x0,
-	y = constants.y0,
-	z = constants.z0,
-	r = SQRT(power(constants.x0,2)+power(constants.y0,2),
+	x = constants.x01,
+	y = constants.y01,
+	z = constants.z01,
+	r = SQRT( power(constants.x01,2) + power(constants.y01,2) ),
 	vx = calculations.v0x,
 	vy = calculations.v0y,
 	vz = calculations.v0z,
-	v = SQRT(power(constants.vx,2)+power(constants.vy,2) + power(constants.vz,2)),
-	vw = SQRT(power(vx-calculations.vxw,2) + power(calculations.vyw-calculations.vyw,2)+power(vz,2)),
+	v = SQRT( power(calculations.v0x,2)+power(calculations.v0y,2) + power(calculations.v0z,2)),
+	vw = SQRT(power(calculations.v0x-calculations.vxw,2) + power(calculations.v0y-calculations.vyw,2)+power(calculations.v0z,2)),
+	cd = @cd_temp,
+	s =  (calculations.romega/vw)*EXP(-t/constants.tau)
 from 
 	constants, calculations, temp
 where 
-	time_temp = 0;	
-	
-	
-if(	
-	
-	
+	@time_temp = 0;	
+
+select @s_temp = temp.s
+from temp
+where @time_temp=0;
+
+if(@test2 = 1)
+	Begin
+		if(@s_temp < 0.1)
+			begin
+				set @cl_temp = 1.5*@s_temp
+			end
+		else
+			begin
+				set @cl_temp = 0.09 + (0.6*@s_temp)
+			end
+	End
+else if(@test2 = 2)
+	begin
+		set @cl_temp = 1/(2.32+0.4/@s_temp)
+	end
+else
+	set @cl_temp = 0;
+
+
+
 update
 	temp
 set
-	cd =  
-from 
-	constants, calculations, temp
-where 
-	time_temp = 0;	
-	
-	
-	
-	
-	
-update
-	temp
-set
-	s = (constants.romega/vw)*EXP(-t/constants.tau),
-from 
-	constants, calculations, temp
-where 
-	time_temp = 0;	
-	
-	
-	
-	
-	
-update
-	temp
-set
-	cl = 
-from 
-	constants, calculations, temp
-where 
-	time_temp = 0;	
-	
-	
-	
-	
-update
-	temp
-set
-	adragx = -constants.const*Cd*vw*(vx-calculations.vxw)
-	adragy = -1*calculations.const*Cd*vw*(vy-calculations.vyw)
-	adragz = -1*calculations.const*Cd*vw*vz
-	w = omega*EXP((-1*@time_temp)/constants.tau)*30/PI()
-	amagx = calculations.const*(Cl/calculations.omega)*vw*(calculations.wy*vz-calculations.wz*(vy-calculations.vyw))
+	cl = @cl_temp,
+	adragx = -calculations.const*Cd*vw*(vx-calculations.vxw),
+	adragy = -1*calculations.const*Cd*vw*(vy-calculations.vyw),
+	adragz = -1*calculations.const*Cd*vw*vz,
+	w = omega*EXP((-1*@time_temp)/constants.tau)*30/PI(),
+	amagx = calculations.const*(Cl/calculations.omega)*vw*(calculations.wy*vz-calculations.wz*(vy-calculations.vyw)),
 	amagy = calculations.const*(Cl/calculations.omega)*vw*(calculations.wz*(vx-calculations.vxw)-calculations.wx*vz),
 	amagz = calculations.const*(Cl/calculations.omega)*vw*(calculations.wx*(vy-calculations.vyw)-calculations.wy*(vx-calculations.vxw)),
 	ax = adragx + aMagx,
 	ay = adragy + aMagy,
-	az = adragz + aMagz -32.174,
+	az = adragz + aMagz -32.174
 from 
 	constants, calculations, temp
 where 
-	time_temp = 0;
-	
-	
-	
-	
-	
-	
-	
-update
-	temp
-set
-	flag = 
-from 
-	constants, calculations, temp
-where
-	time_temp = 0;
-	
-	
-	
-	
-	
+	@time_temp = 0;	
+
+select * from temp
+
+
+	/*
 @time_temp += .001;
 while(@time_temp < 1.126)
 begin
@@ -346,4 +354,4 @@ begin
 end	
 	select * from calculations;
 
-*/
+	*/
