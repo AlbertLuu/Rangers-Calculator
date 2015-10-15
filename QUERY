@@ -13,10 +13,16 @@ GO
 DELETE FROM temp
 GO
 
+USE PitchedBall;
+GO 
+DELETE FROM linearextrapolation
+GO
 
+	declare @x int;
+	set @x = 1;
 INSERT INTO CONSTANTS
 VALUES(
-        1,			/*constant_pk*/
+			@x,		/*constant_pk*/
     		5.125,  /*mass*/
     		9.125,	/*circumference*/
     		-1.0,	/*x01*/
@@ -42,8 +48,7 @@ VALUES(
     		2);			/*magnus*/
 	SELECT * FROM constants;
 
-	declare @x int;
-	set @x = 1;
+
 
 	Insert Into calculations
 	Values(@x,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -247,23 +252,6 @@ VALUES(
 	where
 		adair3_pk = @x;
 
-	Insert Into LinearExtrapolation
-	Values(@x,null,null,null,null,null,null);
-
-	update 
-		LinearExtrapolation
-	set
-		y1 = constants.y01,
-		y2 = 0,
-		x1 = constants.x01,
-		x2 = constants.x01 + (calculations.v0x/calculations.v0y)*(y1-y2),
-		z1 = constants.z01,
-		z2 = constants.z01 + (calculations.v0z/calculations.v0y)*(y1-y2)
-	from
-		constants, calculations, adair3
-	where
-		adair3_pk = @x;
-	
 	
 declare @time_temp decimal(18,3);
 declare @pk_temp decimal(18,3);
@@ -337,7 +325,7 @@ set
 from 
 	constants, calculations, temp
 where 
-	@time_temp = @pk_temp;
+	 t = @time_temp
 
 update
 	temp
@@ -349,7 +337,7 @@ set
 from 
 	constants, calculations, temp
 where 
-	@time_temp = @pk_temp;
+	 t = @time_temp
 
 
 update
@@ -361,7 +349,7 @@ set
 from 
 	constants, calculations, temp
 where 
-	@time_temp = @pk_temp;
+	 t = @time_temp
 
 
 update
@@ -371,7 +359,7 @@ set
 from 
 	constants, calculations, temp
 where 
-	@time_temp = @pk_temp;
+	 t = @time_temp
 	
 
 
@@ -407,7 +395,7 @@ set
 from 
 	constants, calculations, temp
 where 
-	@time_temp = @pk_temp;	
+	 t = @time_temp	
 
 update
 	temp
@@ -433,118 +421,118 @@ set
 from 
 	constants, calculations, temp
 where 
-	@time_temp = @pk_temp;
+	 t = @time_temp
 
 
 
 
 select @test3 = temp.y
 from temp
-where @time_temp = @pk_temp;
+where t = @time_temp;
 
 select @test4 = temp.y+temp.vy*constants.dt+0.5*temp.ay*constants.dt*constants.dt
 from temp,constants
-where @time_temp = @pk_temp;
+where t = @time_temp;
 
-if( (@test4-17/12)*(@test3-17/12) < 0)
+if( (@test3-17/12)*(@test4-17/12) < 0)
 	begin
 		update temp
 		set flag = 1
 		from temp
-		where @time_temp = @pk_temp
+		where t = @time_temp
 	end
 else
 	begin
 		update temp
 		set flag = 0
 		from temp
-		where @time_temp = @pk_temp
+		where t = @time_temp
 	end
 
 
 select @x_temp = temp.x
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @y_temp = temp.y
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @z_temp = temp.z
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @r_temp = temp.r
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @vx_temp = temp.vx
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @vy_temp = temp.vy
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @vz_temp = temp.vz
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @v_temp = temp.v
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @vw_temp = temp.vw
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @cl_temp = temp.cl
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @adragx_temp = temp.adragx
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @adragy_temp = temp.adragy
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @adragz_temp = temp.adragz
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @w_temp = temp.w
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @amagx_temp = temp.amagx
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @amagy_temp = temp.amagy
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @amagz_temp = temp.amagz
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @ax_temp = temp.ax
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @ay_temp = temp.ay
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @az_temp = temp.az
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 select @flag_temp = temp.flag
 from temp
-where @time_temp = @pk_temp
+where t = @time_temp
 
 
 
@@ -575,9 +563,9 @@ where @time_temp = @pk_temp
 set @time_temp = .001
 
 set @pk_temp = .001
-declare @counter int;
 
-while(@time_temp < .45)
+declare @counter decimal(18,4);
+while(@time_temp < .005)
 begin
 	select @test1 = constants.drag
 	from constants
@@ -590,7 +578,7 @@ begin
 	if(@test1 = 1)
 		Begin
 			select @cd_temp = (adair3.cda+adair3.cdb/(1+EXP(-(temp.vw-adair3.vel)/adair3.dv)))
-			from adair3,temp
+			from adair3,temp	
 			where adair3_pk = @x;
 		End
 	else if (@test1 = 2)
@@ -609,40 +597,40 @@ begin
 	insert into temp
 	values(@time_temp,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 		
-		update
+	update
 		temp
 	set
-		x = constants.x01,
-		y = constants.y01,
-		z = constants.z01
+		x = @x_temp+@vx_temp*dt+0.5*@ax_temp*dt*dt,
+		y = @y_temp+@vy_temp*dt+0.5*@ay_temp*dt*dt,
+		z = @z_temp+@vz_temp*dt+0.5*@az_temp*dt*dt
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = @pk_temp;
+		 t = @time_temp
 
 	update
 		temp
 	set
 		r = SQRT( power(x,2) + power(y,2) ),
-		vx = calculations.v0x,
-		vy = calculations.v0y,
-		vz = calculations.v0z
+		vx = @vx_temp+@ax_temp*dt,
+		vy = @vy_temp+@ay_temp*dt,
+		vz = @vz_temp+@az_temp*dt
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = @pk_temp;
+		 t = @time_temp
 
 
 	update
 		temp
 	set
-		v = SQRT( power(x,2)+power(y,2) + power(z,2)),
-		vw = SQRT(power(x-calculations.vxw,2) + power(y-calculations.vyw,2)+power(z,2)),
+		v = SQRT( power(vx,2)+power(vy,2) + power(vz,2)),
+		vw = SQRT(power(vx-calculations.vxw,2) + power(vy-calculations.vyw,2)+power(vz,2)),
 		cd = @cd_temp
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = @pk_temp;
+		 t = @time_temp
 
 
 	update
@@ -652,7 +640,7 @@ begin
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = @pk_temp;
+		 t = @time_temp
 	
 
 
@@ -688,7 +676,7 @@ begin
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = @pk_temp;	
+		 t = @time_temp	
 
 	update
 		temp
@@ -703,7 +691,7 @@ begin
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = @pk_temp;
+		 t = @time_temp
 
 	update
 		temp
@@ -714,127 +702,189 @@ begin
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = @pk_temp;
+		 t = @time_temp
 
 
 
 
 	select @test3 = temp.y
 	from temp
-	where @time_temp = @pk_temp;
+	where t = @time_temp;
 
 	select @test4 = temp.y+temp.vy*constants.dt+0.5*temp.ay*constants.dt*constants.dt
 	from temp,constants
-	where @time_temp = @pk_temp;
+	where t = @time_temp;
 
-	if( (@test4-17/12)*(@test3-17/12) < 0)
+	if( (@test3-17/12)*(@test4-17/12) < 0)
 		begin
 			update temp
 			set flag = 1
 			from temp
-			where @time_temp = @pk_temp
+			where t = @time_temp
 		end
 	else
 		begin
 			update temp
 			set flag = 0
 			from temp
-			where @time_temp = @pk_temp
+			where t = @time_temp
 		end
 
 
 	select @x_temp = temp.x
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @y_temp = temp.y
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @z_temp = temp.z
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @r_temp = temp.r
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @vx_temp = temp.vx
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @vy_temp = temp.vy
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @vz_temp = temp.vz
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @v_temp = temp.v
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @vw_temp = temp.vw
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @cl_temp = temp.cl
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @adragx_temp = temp.adragx
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @adragy_temp = temp.adragy
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @adragz_temp = temp.adragz
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @w_temp = temp.w
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @amagx_temp = temp.amagx
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @amagy_temp = temp.amagy
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @amagz_temp = temp.amagz
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @ax_temp = temp.ax
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @ay_temp = temp.ay
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @az_temp = temp.az
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 
 	select @flag_temp = temp.flag
 	from temp
-	where @time_temp = @pk_temp
+	where t = @time_temp
 	
 	
-	
+	if(@flag_temp = 1)
+		set @counter = @time_temp * 1000
+
 	set @time_temp += .001
-	set @pk_temp = @time_temp
 
 
 
 end	
-select * from temp
 
 
+
+
+insert into LINEAREXTRAPOLATION
+Values(@x,null,null,null,null,null,null);
+
+update 
+	LINEAREXTRAPOLATION
+set 
+	x1 = x01,
+	z1 = z01,
+	y1 = y01,
+	y2 = 0
+from
+	constants
+where 
+	linearextrapolation_pk = @x;
+
+update 
+	LINEAREXTRAPOLATION
+set 
+	x2 = x1 +(v0x/v0y)*(y2-y1),
+	z2 = z1+(calculations.v0z/calculations.v0y)*(linearextrapolation.y2-linearextrapolation.y1)
+from
+	constants, calculations, LINEAREXTRAPOLATION
+where
+	linearextrapolation_pk = @x;
+
+
+insert into misc
+values(@x, null,null,null,null,null,null,null,null,null,null,null,null,null);
+
+update
+	misc
+set
+	tFlag = @counter,
+	tFlag2 = @counter + 1
+
+update
+	misc
+set
+	tX = temp.x,
+	tY = temp.y,
+	tZ = temp.z
+from
+	temp
+where
+	t = tFlag
+
+
+update
+	misc
+set
+	tX2 = temp.x,
+	tY2 = temp.y,
+	tZ2 = temp.z
+from
+	temp
+where
+	t = tFlag2
+
+
+select * from LINEAREXTRAPOLATION
