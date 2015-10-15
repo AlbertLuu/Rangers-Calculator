@@ -1,4 +1,4 @@
-USE PitchedBall;
+UUSE PitchedBall;
 GO
 DELETE FROM CONSTANTS;
 GO
@@ -12,6 +12,7 @@ USE PitchedBall;
 GO
 DELETE FROM temp
 GO
+
 
 INSERT INTO CONSTANTS
 VALUES(
@@ -354,8 +355,8 @@ where
 update
 	temp
 set
-	v = SQRT( power(x,2)+power(y,2) + power(z,2)),
-	vw = SQRT(power(x-calculations.vxw,2) + power(y-calculations.vyw,2)+power(z,2)),
+	v = SQRT( power(vx,2)+power(vy,2) + power(vz,2)),
+	vw = SQRT(power(vx-calculations.vxw,2) + power(vy-calculations.vyw,2)+power(vz,2)),
 	cd = @cd_temp
 from 
 	constants, calculations, temp
@@ -571,11 +572,12 @@ where @time_temp = @pk_temp
 
 
 
-set @time_temp+= .001
+set @time_temp = .001
 
-set @pk_temp += .001;
+set @pk_temp = .001
+declare @counter int;
 
-while(@time_temp < 1.126)
+while(@time_temp < .45)
 begin
 	select @test1 = constants.drag
 	from constants
@@ -701,7 +703,7 @@ begin
 	from 
 		constants, calculations, temp
 	where 
-		@time_temp = 0.0;
+		@time_temp = @pk_temp;
 
 	update
 		temp
@@ -828,9 +830,11 @@ begin
 	
 	
 	set @time_temp += .001
-	set @pk_temp += .001;
-	
-end	
-select * from temp;
+	set @pk_temp = @time_temp
 
-	
+
+
+end	
+select * from temp
+
+
