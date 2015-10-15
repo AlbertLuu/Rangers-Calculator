@@ -405,3 +405,106 @@ vz, vy, vx, z, y, x, t
 truncate, delete*From table x
 
 
+CREATE DATABASE PITCHEDBALL
+
+
+USE [PITCHEDBALL]
+GO
+CREATE TABLE CONSTANTS
+    (
+      constant_pk int,
+      mass real,
+      circumference real,
+      x01 real,
+      y01 real,
+      z01 real,
+      v01 real,
+      theta real,
+      phi real,
+      ws real,
+      wg real,
+      tau real,
+      dt real,
+      T1 real,
+      elev1 real,
+      vwind real,
+      phiwind real,
+      relative_humidity real,
+      barometric_pressure1 real,
+      beta real,
+      constantCD real,
+      drag int,
+      magnus int
+   )
+
+
+
+
+USE [PITCHEDBALL]
+GO
+CREATE TABLE CALCULATIONS
+    (
+      calculations_pk int,
+      rho1 real,
+      rho2 real,
+      const real ,
+      c0 real,
+      v0 real,
+      v0x real,
+      v0y real,
+      v0z real,
+      wx real,
+      wy real,
+      wz real,
+      omega real,
+      romega real,
+      T2 real,
+      elev2 real,
+      vxw real,
+      vyw real,
+      SVP real,
+      barometric_pressure2 real,
+      re100 real
+    )
+
+USE [PITCHEDBALL]
+GO
+CREATE TABLE ADAIR3
+    (
+      adair3_pk int,
+      cda real,
+      cba real,
+      vel real,
+      vel_2 real,
+      dv real,
+      dv_2 real
+    )
+   
+
+USE [PITCHEDBALL]
+GO
+CREATE TABLE DATA
+(
+    t real,
+    x real,
+    y real,
+    z real,
+    r real,
+    vx real,
+    vy real,
+    vz real,
+    cd real,
+    s real,
+    cl real,
+    adragx real,
+    adragy real,
+    adragz real,
+    w real,
+    aMagx real,
+    aMagy real,
+    aMagz real,
+    ax real,
+    ay real,
+    az real,
+    flag int
+)
