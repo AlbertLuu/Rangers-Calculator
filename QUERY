@@ -1,7 +1,7 @@
 USE PitchedBall;
 GO
-DELETE FROM CONSTANTS;
-GO
+DELETE FROM CONSTANTS
+GO 
 
 USE PitchedBall;
 GO
@@ -16,11 +16,24 @@ GO
 USE PitchedBall;
 GO 
 DELETE FROM linearextrapolation
-GO
+GO 
 
+USE PitchedBall;
+GO 
+DELETE FROM misc
+GO 
+	
+	declare @h int;
 	declare @x int;
 	set @x = 1;
-INSERT INTO CONSTANTS
+	set @h = 0;
+
+
+set @h = (select max(constant_pk) from constants) +1
+set @x = @h	 
+
+
+INSERT INTO CONSTANTS	
 VALUES(
 			@x,		/*constant_pk*/
     		5.125,  /*mass*/
@@ -223,7 +236,7 @@ VALUES(
 	where 
 		calculations_pk = @x;
 
-	update 
+	update						/*up to this point, fill calculations table*/
 		calculations
 	set	
 		romega = ((constants.circumference/2)/PI())*omega/12,
@@ -238,8 +251,8 @@ VALUES(
 	VALUES(@x,null,null,null,null,null,null);
 	
 	
-	update 
-		adair3 
+	update					/*fill adair table*/
+		adair3   
 	set
 		cda = 0.5,
 		cdb = -0.227,
@@ -294,7 +307,7 @@ select @test2 = constants.magnus
 from constants
 where constant_pk = @x;
 
-if(@test1 = 1)
+if(@test1 = 1)	/*if statements for some calculations*/
 	Begin
 		select @cd_temp = (adair3.cda+adair3.cdb/(1+EXP(-(temp.vw-adair3.vel)/adair3.dv)))
 		from adair3,temp
@@ -365,7 +378,7 @@ where
 
 select @s_temp = temp.s
 from temp
-where @time_temp=@pk_temp;
+where t = @time_temp;
 
 if(@test2 = 1)
 	Begin
@@ -410,7 +423,7 @@ set
 from 
 	constants, calculations, temp
 where 
-	@time_temp = 0.0;
+	@time_temp = 0;
 
 update
 	temp
@@ -443,7 +456,7 @@ if( (@test3-17/12)*(@test4-17/12) < 0)
 	end
 else
 	begin
-		update temp
+		update temp					/*updating temp table (1st row of large table)*/
 		set flag = 0
 		from temp
 		where t = @time_temp
@@ -466,7 +479,7 @@ select @r_temp = temp.r
 from temp
 where t = @time_temp
 
-select @vx_temp = temp.vx
+select @vx_temp = temp.vx					/*storing temp first row to be used in next row*/
 from temp
 where t = @time_temp
 
@@ -562,10 +575,10 @@ where t = @time_temp
 
 set @time_temp = .001
 
-set @pk_temp = .001
+
 
 declare @counter decimal(18,4);
-while(@time_temp < .005)
+while(@time_temp < .005)			/*from 2nd row until x row*/
 begin
 	select @test1 = constants.drag
 	from constants
@@ -573,7 +586,7 @@ begin
 
 	select @test2 = constants.magnus
 	from constants
-	where constant_pk = @x;
+	where constant_pk = @x;									/*copy and paste of first row for rest of numbers with updated calculations*/
 
 	if(@test1 = 1)
 		Begin
@@ -646,7 +659,7 @@ begin
 
 	select @s_temp = temp.s
 	from temp
-	where @time_temp=@pk_temp;
+	where t = @time_temp;
 
 	if(@test2 = 1)
 		Begin
@@ -832,7 +845,7 @@ insert into LINEAREXTRAPOLATION
 Values(@x,null,null,null,null,null,null);
 
 update 
-	LINEAREXTRAPOLATION
+	LINEAREXTRAPOLATION						
 set 
 	x1 = x01,
 	z1 = z01,
@@ -860,8 +873,8 @@ values(@x, null,null,null,null,null,null,null,null,null,null,null,null,null);
 update
 	misc
 set
-	tFlag = @counter,
-	tFlag2 = @counter + 1
+	tFlag = @counter + 29,
+	tFlag2 = @counter + 30
 
 update
 	misc
@@ -886,5 +899,65 @@ from
 where
 	t = tFlag2
 
+update
+	misc
+set
+	tY3 = (tY2-17/12)/(tY2-tY)
+from
+	temp
+where
+	t = tFlag2
 
-select * from LINEAREXTRAPOLATION
+
+
+
+insert into HOMEPLATECROSSING
+Values(@x,null,null,null,null,null);
+
+
+update
+	HOMEPLATECROSSING
+set
+	xf = tX2-tY3*(tX2-tX),
+	yf =tY2-tY3*(tY2-tY),
+	zf = tZ2-tY3*(tZ2-tZ),
+	hangtime = time2-time1*(time2-tY3),
+	vf = (tVel2-tY3*(tVel2-tVel))*3600/5280
+from
+	misc
+where
+	misc_pk = @x
+
+select * from misc
+select * from temp
+
+insert into summary
+values (@x,null,null,null,null,null,null,null,null);
+
+update
+	summary
+set
+	v0_ = v01,
+	x0_ = x01,
+	z0_ = z01,
+	vf_ = vf,
+	px_ = xf,
+	pz_ = zf
+from 
+	constants, HOMEPLATECROSSING
+where
+	summary_pk = @x
+
+update
+	summary
+set
+	xMvmt = 12*(px_-(x01+(v0x/v0y)*(17/12-y01))),
+	yMvmt = 12*(pz_-(z01+(v0z/v0y)*(17/12-y01)))
+from
+	calculations, summary, constants
+where
+	summary_pk = @x
+
+
+
+
