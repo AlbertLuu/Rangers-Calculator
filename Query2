@@ -1,0 +1,686 @@
+USE PitchedBall;
+GO
+DELETE FROM CONSTANTS
+GO 
+
+USE PitchedBall;
+GO
+DELETE FROM calculations
+GO
+
+USE PitchedBall;
+GO
+DELETE FROM temp
+GO
+
+USE PitchedBall;
+GO 
+DELETE FROM linearextrapolation
+GO 
+
+USE PitchedBall;
+GO 
+DELETE FROM misc
+GO 
+	
+	declare @h int;
+	declare @x int;
+	set @x = 1;
+	set @h = 0;
+
+
+set @h = (select max(constant_pk) from constants) +1
+set @x = @h	 
+
+
+INSERT INTO CONSTANTS	
+VALUES(
+			@x,		/*constant_pk*/
+    		5.125,  /*mass*/
+    		9.125,	/*circumference*/
+    		-1.0,	/*x01*/
+    		55.0,	/*y01*/
+    		6.0,	/*z01*/
+    		95.0,	/*v01*/
+    		-2.0,	/*theta*/
+    		179,	/*phi*/
+    		1500,	/*wb*/
+    		1000,	/*ws*/
+    		0,		/*wg*/
+    		10000,	/*tau*/
+    		0.001,	/*dt*/
+    		75.0,	/*Temp (farenheit)*/
+    		0.0,	/*elev (ft)*/
+    		0.0,	/*vwind*/
+    		0.0,	/*phiwind*/
+    		50.0,	/*relative humidity*/
+    		29.92,	/*barometric pressure (in Hg) */
+    		0.0001217,	/*beta*/
+    		0.330,		/*constant cd*/
+    		2,			/*drag*/
+    		2);			/*magnus*/
+	SELECT * FROM constants;
+
+
+
+	Insert Into calculations
+	Values(@x,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+	
+
+	
+	declare @v0 decimal(18,4);
+	Select @v0 = constants.v01 * 1.467
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0 = @v0
+	where calculations_pk = @x;
+
+	
+	declare @v0x decimal(18,4);
+	Select @v0x = 1.467*constants.v01*COS(constants.theta*PI()/180)*SIN(constants.phi*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0x = @v0x
+	where calculations_pk = @x;
+	
+
+	declare @v0y decimal(18,4);
+	Select @v0y = 1.467*constants.v01*COS(constants.theta*PI()/180)*COS(constants.phi*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0y = @v0y
+	where calculations_pk = @x;
+
+
+	declare @v0z decimal(18,4);
+	Select @v0z = 1.467*constants.v01*SIN(constants.theta*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set v0z= @v0z
+	where calculations_pk = @x;
+
+	
+	declare @T2 decimal(18,4);
+	Select @T2 = (5.0/9.0)*(constants.T1-32)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set T2= @T2
+	where calculations_pk = @x;
+
+	
+	
+	declare @elev2 decimal(18,4);
+	Select @elev2 = constants.elev1/3.2808
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set elev2= @elev2
+	where calculations_pk = @x;
+
+
+	declare @vxw decimal(18,4);
+	Select @vxw = constants.vwind*1.467*SIN(constants.phiwind*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set vxw = @vxw
+	where calculations_pk = @x;
+
+
+	declare @vyw decimal(18,4);
+	Select @vyw = constants.vwind*1.467*COS(constants.phiwind*PI()/180)
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set vyw = @vyw
+	where calculations_pk = @x;
+
+
+	
+
+	declare @barometric_pressure2 decimal(18,4);
+	Select @barometric_pressure2 = barometric_pressure1*1000/39.37
+	from constants
+	where constant_pk = @x;
+
+	UPDATE calculations
+	set barometric_pressure2 = @barometric_pressure2
+	where calculations_pk = @x;
+
+
+
+	
+
+
+	declare @relative_humidity decimal(18,4);
+	Select @relative_humidity = constants.relative_humidity
+	from constants
+	where constant_pk = @x;
+
+	declare @beta decimal(18,4);
+	Select @beta = constants.beta
+	from constants
+	where constant_pk = @x;
+
+	declare @SVP decimal(18,4);
+	Select @SVP = 4.5841*EXP((18.687-T2/234.5)*T2/(257.14+T2))
+	from calculations
+	where calculations_pk = @x;
+
+	UPDATE calculations
+	set SVP = @SVP
+	where calculations_pk = @x;
+
+
+	
+	update 
+		calculations
+	set	
+		rho2 = 1.2929*(273/(T2+273)*(barometric_pressure2*EXP(-beta*elev2)-0.3783*relative_humidity*SVP/100)/760)
+	from
+		constants, calculations
+	where 
+		calculations_pk = @x;
+
+
+	update 
+		calculations
+	set	
+		rho1 = rho2 *0.06261
+	from
+		constants, calculations
+	where 
+		calculations_pk = @x;
+
+	update 
+		calculations
+	set	
+		c0 = 0.07182*rho1*(5.125/constants.mass)*POWER((constants.circumference/9.125),2)
+	from
+		constants, calculations
+	where 
+		calculations_pk = @x;
+
+
+	update 
+		calculations
+	set	
+		const = c0,
+		wx = (wb*COS(phi*PI()/180)-ws*SIN(theta*PI()/180)*SIN(phi*PI()/180)+wg*v0x/v0)*PI()/30,
+		wy = (-wb*SIN(phi*PI()/180)-ws*SIN(theta*PI()/180)*COS(phi*PI()/180)+wg*v0y/v0)*PI()/30,
+		wz = (ws*COS(theta*PI()/180)+wg*v0z/v0)*PI()/30
+	from
+		constants, calculations
+	where 
+		calculations_pk = @x;
+
+	update 
+		calculations
+	set	
+		omega =  SQRT(power(wx,2)+power(wy,2)+power(wz,2))
+	from
+		constants, calculations
+	where 
+		calculations_pk = @x;
+
+	update						/*up to this point, fill calculations table*/
+		calculations
+	set	
+		romega = ((constants.circumference/2)/PI())*omega/12,
+		barometric_pressure2 = constants.barometric_pressure1*1000/39.37,
+		re100 = rho2*44.7*(constants.circumference/(PI()*39.37))*(T2+273.16+120)/(0.000001512*Power(T2+273.16,1.5))
+	from
+		constants, calculations
+	where 
+		calculations_pk = @x;
+	
+	INSERT INTO ADAIR3
+	VALUES(@x,null,null,null,null,null,null);
+	
+	
+	update					/*fill adair table*/
+		adair3   
+	set
+		cda = 0.5,
+		cdb = -0.227,
+		vel = 74.1*1.467*210000/calculations.Re100,
+		vel_2 = vel/1.467,
+		dv = 14.3*1.467*210000/calculations.Re100,
+		dv_2 = dv/1.467
+	from
+		calculations, adair3
+	where
+		adair3_pk = @x;
+
+	
+declare @time_temp decimal(18,3);
+declare @pk_temp decimal(18,3);
+declare @x_temp decimal(18,3);
+declare @y_temp decimal(18,3);
+declare @z_temp decimal(18,3);
+declare @r_temp decimal(18,3);
+declare @vx_temp decimal(18,3);
+declare @vy_temp decimal(18,3);
+declare @vz_temp decimal(18,3);
+declare @v_temp decimal(18,3);
+declare @vw_temp decimal(18,3);
+declare @cd_temp decimal(18,3);
+declare @s_temp decimal(18,3);
+declare @cl_temp decimal(18,3);
+declare @adragx_temp decimal(18,3);
+declare @adragy_temp decimal(18,3);
+declare @adragz_temp decimal(18,3);
+declare @w_temp decimal(18,3);
+declare @amagx_temp decimal(18,3);
+declare @amagy_temp decimal(18,3);
+declare @amagz_temp decimal(18,3);
+declare @ax_temp decimal(18,3);
+declare @ay_temp decimal(18,3);
+declare @az_temp decimal(18,3);
+declare @flag_temp decimal(18,3);
+declare @test1 int;
+declare @test2 int;
+declare @test3 int;
+declare @test4 int;
+
+set @pk_temp = 0;
+set @time_temp= 0;
+
+select @test1 = constants.drag
+from constants
+where constant_pk = @x;
+
+select @test2 = constants.magnus
+from constants
+where constant_pk = @x;
+
+if(@test1 = 1)	/*if statements for some calculations*/
+	Begin
+		select @cd_temp = (adair3.cda+adair3.cdb/(1+EXP(-(temp.vw-adair3.vel)/adair3.dv)))
+		from adair3,temp
+		where adair3_pk = @x;
+	End
+else if (@test1 = 2)
+	begin
+		select @cd_temp = constants.constantCD
+		from constants
+		where constant_pk = @x;
+	end
+else
+	begin
+		set @cd_temp = @pk_temp;
+	end
+
+
+
+insert into temp
+values(@time_temp,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+
+update
+	temp
+set
+	x = constants.x01,
+	y = constants.y01,
+	z = constants.z01
+from 
+	constants, calculations, temp
+where 
+	 t = @time_temp
+
+update
+	temp
+set
+	r = SQRT( power(x,2) + power(y,2) ),
+	vx = calculations.v0x,
+	vy = calculations.v0y,
+	vz = calculations.v0z
+from 
+	constants, calculations, temp
+where 
+	 t = @time_temp
+
+
+update
+	temp
+set
+	v = SQRT( power(vx,2)+power(vy,2) + power(vz,2)),
+	vw = SQRT(power(vx-calculations.vxw,2) + power(vy-calculations.vyw,2)+power(vz,2)),
+	cd = @cd_temp
+from 
+	constants, calculations, temp
+where 
+	 t = @time_temp
+
+
+update
+	temp
+set
+	s =  (calculations.romega/temp.vw)*EXP(-t/constants.tau)
+from 
+	constants, calculations, temp
+where 
+	 t = @time_temp
+	
+
+
+select @s_temp = temp.s
+from temp
+where t = @time_temp;
+
+if(@test2 = 1)
+	Begin
+		if(@s_temp < 0.1)
+			begin
+				set @cl_temp = 1.5*@s_temp
+			end
+		else
+			begin
+				set @cl_temp = 0.09 + (0.6*@s_temp)
+			end
+	End
+else if(@test2 = 2)
+	begin
+		set @cl_temp = 1/(2.32+ 0.4/@s_temp)
+	end
+else
+	set @cl_temp = 0;
+
+
+
+update
+	temp
+set
+	cl = @cl_temp
+	
+from 
+	constants, calculations, temp
+where 
+	 t = @time_temp	
+
+update
+	temp
+set
+	adragx = -const*cd*vw*(vx-vxw),
+	adragy = -const*cd*vw*(vy-vyw),
+	adragz = -1*calculations.const*Cd*vw*vz,
+	w = omega*EXP((-1*@time_temp)/constants.tau)*30/PI(),
+	amagx = calculations.const*(Cl/calculations.omega)*vw*(calculations.wy*vz-calculations.wz*(vy-calculations.vyw)),
+	amagy = calculations.const*(Cl/calculations.omega)*vw*(calculations.wz*(vx-calculations.vxw)-calculations.wx*vz),
+	amagz = calculations.const*(Cl/calculations.omega)*vw*(calculations.wx*(vy-calculations.vyw)-calculations.wy*(vx-calculations.vxw))
+from 
+	constants, calculations, temp
+where 
+	@time_temp = 0;
+
+update
+	temp
+set
+	ax = adragx + aMagx,
+	ay = adragy + aMagy,
+	az = adragz + aMagz -32.174
+from 
+	constants, calculations, temp
+where 
+	 t = @time_temp
+
+
+
+
+select @test3 = temp.y
+from temp
+where t = @time_temp;
+
+select @test4 = temp.y+temp.vy*constants.dt+0.5*temp.ay*constants.dt*constants.dt
+from temp,constants
+where t = @time_temp;
+
+if( (@test3-17/12)*(@test4-17/12) < 0)
+	begin
+		update temp
+		set flag = 1
+		from temp
+		where t = @time_temp
+	end
+else
+	begin
+		update temp					/*updating temp table (1st row of large table)*/
+		set flag = 0
+		from temp
+		where t = @time_temp
+	end
+
+
+
+
+
+
+
+declare @check decimal(18,4);
+declare @search decimal(18,4);
+declare @row1 decimal(18,4);
+declare @row2 decimal(18,4);
+
+select @search = temp.z
+from temp
+where t = @time_temp;
+
+select @row1 = temp.z
+from temp
+where t = @time_temp;
+
+set @search = 1.126/2
+
+while(@check > .3 OR @check < -.3)
+  begin
+
+	set @time_temp = @search
+	update
+		constants
+	set
+		dt = @search
+
+	
+	 
+
+	select @test1 = constants.drag
+	from constants
+	where constant_pk = @x;
+
+	select @test2 = constants.magnus
+	from constants
+	where constant_pk = @x;									/*copy and paste of first row for rest of numbers with updated calculations*/
+
+	if(@test1 = 1)
+		Begin
+			select @cd_temp = (adair3.cda+adair3.cdb/(1+EXP(-(temp.vw-adair3.vel)/adair3.dv)))
+			from adair3,temp	
+			where adair3_pk = @x;
+		End
+	else if (@test1 = 2)
+		begin
+			select @cd_temp = constants.constantCD
+			from constants
+			where constant_pk = @x;
+		end
+	else
+		begin
+			set @cd_temp = @pk_temp;
+		end
+
+
+
+	insert into temp
+	values(@time_temp,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+	
+	update
+		temp
+	set
+		x = @x_temp+@vx_temp*dt+0.5*@ax_temp*dt*dt,
+		y = @y_temp+@vy_temp*dt+0.5*@ay_temp*dt*dt,
+		z = @z_temp+@vz_temp*dt+0.5*@az_temp*dt*dt
+	from 
+		constants, calculations, temp
+	where 
+		 t = @time_temp
+
+	update
+		temp
+	set
+		r = SQRT( power(x,2) + power(y,2) ),
+		vx = @vx_temp+@ax_temp*dt,
+		vy = @vy_temp+@ay_temp*dt,
+		vz = @vz_temp+@az_temp*dt
+	from 
+		constants, calculations, temp
+	where 
+		 t = @time_temp
+
+
+	update
+		temp
+	set
+		v = SQRT( power(vx,2)+power(vy,2) + power(vz,2)),
+		vw = SQRT(power(vx-calculations.vxw,2) + power(vy-calculations.vyw,2)+power(vz,2)),
+		cd = @cd_temp
+	from 
+		constants, calculations, temp
+	where 
+		 t = @time_temp
+
+
+	update
+		temp
+	set
+		s =  (calculations.romega/temp.vw)*EXP(-t/constants.tau)
+	from 
+		constants, calculations, temp
+	where 
+		 t = @time_temp
+	
+
+
+	select @s_temp = temp.s
+	from temp
+	where t = @time_temp;
+
+	if(@test2 = 1)
+		Begin
+			if(@s_temp < 0.1)
+				begin
+					set @cl_temp = 1.5*@s_temp
+				end
+			else
+				begin
+					set @cl_temp = 0.09 + (0.6*@s_temp)
+				end
+		End
+	else if(@test2 = 2)
+		begin
+			set @cl_temp = 1/(2.32+ 0.4/@s_temp)
+		end
+	else
+		set @cl_temp = 0;
+
+
+
+	update
+		temp
+	set
+		cl = @cl_temp
+	
+	from 
+		constants, calculations, temp
+	where 
+		 t = @time_temp	
+
+	update
+		temp
+	set
+		adragx = -const*cd*vw*(vx-vxw),
+		adragy = -const*cd*vw*(vy-vyw),
+		adragz = -1*calculations.const*Cd*vw*vz,
+		w = omega*EXP((-1*@time_temp)/constants.tau)*30/PI(),
+		amagx = calculations.const*(Cl/calculations.omega)*vw*(calculations.wy*vz-calculations.wz*(vy-calculations.vyw)),
+		amagy = calculations.const*(Cl/calculations.omega)*vw*(calculations.wz*(vx-calculations.vxw)-calculations.wx*vz),
+		amagz = calculations.const*(Cl/calculations.omega)*vw*(calculations.wx*(vy-calculations.vyw)-calculations.wy*(vx-calculations.vxw))
+	from 
+		constants, calculations, temp
+	where 
+		 t = @time_temp
+
+	update
+		temp
+	set
+		ax = adragx + aMagx,
+		ay = adragy + aMagy,
+		az = adragz + aMagz -32.174
+	from 
+		constants, calculations, temp
+	where 
+		 t = @time_temp
+
+
+
+
+	select @test3 = temp.y
+	from temp
+	where t = @time_temp;
+
+	select @test4 = temp.y+temp.vy*constants.dt+0.5*temp.ay*constants.dt*constants.dt
+	from temp,constants
+	where t = @time_temp;
+
+	if( (@test3-17/12)*(@test4-17/12) < 0)
+		begin
+			update temp
+			set flag = 1
+			from temp
+			where t = @time_temp
+		end
+	else
+		begin
+			update temp
+			set flag = 0
+			from temp
+			where t = @time_temp
+		end
+
+
+	select @row2 = temp.z
+	from temp
+	where t = @time_temp
+
+	set @check = @row2 - @row1
+
+
+	if(@check > 0)
+		begin
+			set @search = @search + @search/2
+		end
+	else if(@check < 0)
+		begin
+			set @search = @search - @search/2
+		end
+	else
+		begin
+			set @search = @search
+		end
+	
+	
+	DELETE FROM temp
+	
+
+  end
