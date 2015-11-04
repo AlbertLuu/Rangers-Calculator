@@ -23,14 +23,14 @@ GO
 DELETE FROM misc
 GO 
 	
-	declare @h int;
+	/*declare @h int;*/
 	declare @x int;
 	set @x = 1;
-	set @h = 0;
+	/*set @h = 0;
 
 
 set @h = (select max(constant_pk) from constants) +1
-set @x = @h	 
+set @x = @h	 */
 
 
 INSERT INTO CONSTANTS	
@@ -38,17 +38,17 @@ VALUES(
 			@x,		/*constant_pk*/
     		5.125,  /*mass*/
     		9.125,	/*circumference*/
-    		-1.0,	/*x01*/
-    		55.0,	/*y01*/
-    		6.0,	/*z01*/
-    		95.0,	/*v01*/
-    		-2.0,	/*theta*/
-    		179,	/*phi*/
+    		0,	/*x01*/
+    		2,	/*y01*/
+    		3.5,	/*z01*/
+    		100,	/*v01*/
+    		28,	/*theta*/
+    		0,	/*phi*/
     		1500,	/*wb*/
-    		1000,	/*ws*/
+    		0,	/*ws*/
     		0,		/*wg*/
     		10000,	/*tau*/
-    		0.001,	/*dt*/
+    		0.01,	/*dt*/
     		75.0,	/*Temp (farenheit)*/
     		0.0,	/*elev (ft)*/
     		0.0,	/*vwind*/
@@ -56,7 +56,7 @@ VALUES(
     		50.0,	/*relative humidity*/
     		29.92,	/*barometric pressure (in Hg) */
     		0.0001217,	/*beta*/
-    		0.330,		/*constant cd*/
+    		0.350,		/*constant cd*/
     		2,			/*drag*/
     		2);			/*magnus*/
 	SELECT * FROM constants;
@@ -265,7 +265,7 @@ VALUES(
 	where
 		adair3_pk = @x;
 
-	
+	select * from calculations
 declare @time_temp decimal(18,3);
 declare @pk_temp decimal(18,3);
 declare @x_temp decimal(18,3);
@@ -463,9 +463,89 @@ else
 	end
 
 
+		select @x_temp = temp.x
+	from temp
+	where t = @time_temp
 
+	select @y_temp = temp.y
+	from temp
+	where t = @time_temp
 
+	select @z_temp = temp.z
+	from temp
+	where t = @time_temp
 
+	select @r_temp = temp.r
+	from temp
+	where t = @time_temp
+
+	select @vx_temp = temp.vx
+	from temp
+	where t = @time_temp
+
+	select @vy_temp = temp.vy
+	from temp
+	where t = @time_temp
+
+	select @vz_temp = temp.vz
+	from temp
+	where t = @time_temp
+
+	select @v_temp = temp.v
+	from temp
+	where t = @time_temp
+
+	select @vw_temp = temp.vw
+	from temp
+	where t = @time_temp
+
+	select @cl_temp = temp.cl
+	from temp
+	where t = @time_temp
+
+	select @adragx_temp = temp.adragx
+	from temp
+	where t = @time_temp
+
+	select @adragy_temp = temp.adragy
+	from temp
+	where t = @time_temp
+
+	select @adragz_temp = temp.adragz
+	from temp
+	where t = @time_temp
+
+	select @w_temp = temp.w
+	from temp
+	where t = @time_temp
+
+	select @amagx_temp = temp.amagx
+	from temp
+	where t = @time_temp
+
+	select @amagy_temp = temp.amagy
+	from temp
+	where t = @time_temp
+
+	select @amagz_temp = temp.amagz
+	from temp
+	where t = @time_temp
+
+	select @ax_temp = temp.ax
+	from temp
+	where t = @time_temp
+
+	select @ay_temp = temp.ay
+	from temp
+	where t = @time_temp
+
+	select @az_temp = temp.az
+	from temp
+	where t = @time_temp
+
+	select @flag_temp = temp.flag
+	from temp
+	where t = @time_temp
 
 
 declare @check decimal(18,4);
@@ -473,20 +553,26 @@ declare @search decimal(18,4);
 declare @row1 decimal(18,4);
 declare @row2 decimal(18,4);
 
-select @search = temp.z
-from temp
-where t = @time_temp;
+
+set @check = 5000 
 
 select @row1 = temp.z
 from temp
 where t = @time_temp;
 
-set @search = 1.126/2
+set @search = 11.26/2
 
-while(@check > .3 OR @check < -.3)
+
+
+
+while(@check > 1 OR @check < -1)
   begin
+	
+	insert into temp
+	values(@search,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 
-	set @time_temp = @search
+	
+
 	update
 		constants
 	set
@@ -522,8 +608,7 @@ while(@check > .3 OR @check < -.3)
 
 
 
-	insert into temp
-	values(@time_temp,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+
 	
 	update
 		temp
@@ -534,7 +619,7 @@ while(@check > .3 OR @check < -.3)
 	from 
 		constants, calculations, temp
 	where 
-		 t = @time_temp
+		 t = @search
 
 	update
 		temp
@@ -546,7 +631,7 @@ while(@check > .3 OR @check < -.3)
 	from 
 		constants, calculations, temp
 	where 
-		 t = @time_temp
+		 t = @search
 
 
 	update
@@ -558,7 +643,7 @@ while(@check > .3 OR @check < -.3)
 	from 
 		constants, calculations, temp
 	where 
-		 t = @time_temp
+		 t = @search
 
 
 	update
@@ -568,13 +653,13 @@ while(@check > .3 OR @check < -.3)
 	from 
 		constants, calculations, temp
 	where 
-		 t = @time_temp
+		 t = @search
 	
 
 
 	select @s_temp = temp.s
 	from temp
-	where t = @time_temp;
+	where t = @search;
 
 	if(@test2 = 1)
 		Begin
@@ -604,7 +689,7 @@ while(@check > .3 OR @check < -.3)
 	from 
 		constants, calculations, temp
 	where 
-		 t = @time_temp	
+		 t = @search
 
 	update
 		temp
@@ -619,7 +704,7 @@ while(@check > .3 OR @check < -.3)
 	from 
 		constants, calculations, temp
 	where 
-		 t = @time_temp
+		 t = @search
 
 	update
 		temp
@@ -630,38 +715,38 @@ while(@check > .3 OR @check < -.3)
 	from 
 		constants, calculations, temp
 	where 
-		 t = @time_temp
+		 t = @search
 
 
 
 
 	select @test3 = temp.y
 	from temp
-	where t = @time_temp;
+	where t = @search
 
 	select @test4 = temp.y+temp.vy*constants.dt+0.5*temp.ay*constants.dt*constants.dt
 	from temp,constants
-	where t = @time_temp;
+	where t = @search
 
 	if( (@test3-17/12)*(@test4-17/12) < 0)
 		begin
 			update temp
 			set flag = 1
 			from temp
-			where t = @time_temp
+			where t = @search
 		end
 	else
 		begin
 			update temp
 			set flag = 0
 			from temp
-			where t = @time_temp
+			where t = @search
 		end
 
 
 	select @row2 = temp.z
 	from temp
-	where t = @time_temp
+	where t = @search
 
 	set @check = @row2 - @row1
 
@@ -680,7 +765,10 @@ while(@check > .3 OR @check < -.3)
 		end
 	
 	
-	DELETE FROM temp
+	
 	
 
   end
+
+
+  select * from temp
