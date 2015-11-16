@@ -1,34 +1,67 @@
 /*DBCC CHECKIDENT (inputs, RESEED, 0)*/
-use specific
+/*use specific
 go
 delete from inputs
-go 
+go 10
 
+use specific
+go
+delete from calculations
+go 10*/
+
+declare @z int;
+declare @y int;
 declare @x int;
-set @x = 0
-set @x = (select max(inputs_pk) from inputs) +1
-use [specific]
+select @x = count(*) from calculations
+set @x = @x +1
+select @y = count(*) from inputs
+select @z = count(*) from inputs
+set @z = @z + 1
+
 insert into inputs
-Values(
-		null,	/*distance*/
-		1,		/*v0*/
+values(
+		@z,		
+		10,		/*v0*/
 		1,		/*theta*/
-		1,		/*phi*/
-		null,		/*phif*/
-		1		/*T*/
+		1		/*phi*/
 	  )
 
+insert into calculations
+Values(@x,null,null,null)
 
 
 update 
-	inputs
+	CALCULATIONS
 set 
-	v0 = @x
+	distance = (-111.9+5.032*v0+0*power(v0,2))*(1-((4.218*power(10,-04))+(7.408*power(10,-06)*v0)*power((theta-41.0-0.120*v0),2))),
+	T = 0.138 + 0.1008*v0*sin(theta),
+	phif =  1.258*phi
 from 
 	inputs
 where 
-	inputs_pk = @x
+	calculations_pk = @x
 
 select * from inputs
+select * from calculations
 
 
+
+USE [SPECIFIC]
+GO
+CREATE TABLE INPUTS
+(
+	
+	v0 decimal (18,4),
+	theta decimal (18,4),
+	phi decimal (18,4)
+)
+
+USE [SPECIFIC]
+GO
+CREATE TABLE CALCULATIONS
+(
+	
+	distance decimal (18,4),
+	T decimal (18,4),
+	phif decimal (18,4),
+)
